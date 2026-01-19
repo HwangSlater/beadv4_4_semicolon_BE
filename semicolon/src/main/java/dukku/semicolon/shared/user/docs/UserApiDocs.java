@@ -47,7 +47,7 @@ public final class UserApiDocs {
                                     name = "Register Request",
                                     value = """
                                             {
-                                              "email": "user@example.com",
+                                              "email": "semicolon@example.com",
                                               "password": "Password123!",
                                               "nickname": "홍길동"
                                             }
@@ -66,7 +66,7 @@ public final class UserApiDocs {
                                             value = """
                                                     {
                                                       "userUuid": "550e8400-e29b-41d4-a716-446655440000",
-                                                      "email": "user@example.com",
+                                                      "email": "semicolon@example.com",
                                                       "nickname": "홍길동",
                                                       "role": "USER",
                                                       "status": "ACTIVE"
@@ -113,7 +113,7 @@ public final class UserApiDocs {
                                             value = """
                                                     {
                                                       "userUuid": "550e8400-e29b-41d4-a716-446655440000",
-                                                      "email": "user@example.com",
+                                                      "email": "semicolon@example.com",
                                                       "nickname": "홍길동",
                                                       "role": "USER",
                                                       "status": "ACTIVE"
@@ -166,7 +166,7 @@ public final class UserApiDocs {
                                             value = """
                                                     {
                                                       "userUuid": "550e8400-e29b-41d4-a716-446655440000",
-                                                      "email": "user@example.com",
+                                                      "email": "semicolon@example.com",
                                                       "nickname": "새로운닉네임",
                                                       "role": "USER",
                                                       "status": "ACTIVE"

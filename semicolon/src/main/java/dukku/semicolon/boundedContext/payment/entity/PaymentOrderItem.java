@@ -29,24 +29,24 @@ import java.util.UUID;
 public class PaymentOrderItem extends BaseIdAndUUIDAndTime {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payments_id", nullable = false)
+    @JoinColumn(name = "payment_id", nullable = false)
     private Payment payment;
 
-    @Column(name = "payment_coupon", nullable = false)
-    private Integer paymentCoupon; // 쿠폰 할인액 스냅샷
+    @Column(nullable = false, comment = "쿠폰 할인액 스냅샷")
+    private Integer paymentCoupon;
 
     @JdbcTypeCode(SqlTypes.UUID)
-    @Column(name = "seller_uuid", nullable = false, columnDefinition = "uuid")
+    @Column(nullable = false, columnDefinition = "uuid", comment = "판매자 UUID")
     private UUID sellerUuid;
 
-    @Column(name = "product_id", nullable = false)
-    private Integer productId; // 원본 상품 ID 스냅샷
+    @Column(nullable = false, comment = "원본 상품 ID 스냅샷")
+    private Integer productId;
 
-    @Column(name = "product_name", nullable = false)
+    @Column(nullable = false, comment = "상품명 스냅샷")
     private String productName;
 
-    @Column(nullable = false)
-    private Integer price; // 결제 시점 단가
+    @Column(nullable = false, comment = "결제 시점 단가")
+    private Integer price;
 
     // === 정적 팩토리 메서드 ===
 

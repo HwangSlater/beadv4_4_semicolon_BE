@@ -16,7 +16,7 @@ import lombok.experimental.SuperBuilder;
  * 부분 환불 시 어떤 상품이 얼마만큼 환불되었는지 기록한다.
  */
 @Entity
-@Table(name = "refund_item")
+@Table(name = "refund_items")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -24,21 +24,21 @@ import lombok.experimental.SuperBuilder;
 public class RefundItem extends BaseIdAndUUIDAndTime {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "refund_id", nullable = false)
+    @JoinColumn(nullable = false)
     private Refund refund;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_order_item_id", nullable = false)
+    @JoinColumn(nullable = false)
     private PaymentOrderItem paymentOrderItem;
 
-    @Column(name = "refund_amount", nullable = false)
-    private Integer refundAmount; // 결제주문상품 금액 - 쿠폰 할인액
+    @Column(nullable = false, comment = "환불 금액 (결제주문상품 금액 - 쿠폰 할인액)")
+    private Integer refundAmount;
 
-    @Column(name = "refund_deposit", nullable = false)
-    private Integer refundDeposit; // 이 상품에 적용된 환불 예치금 금액
+    @Column(nullable = false, comment = "환불 예치금 (이 상품에 적용된 환불 예치금 금액)")
+    private Integer refundDeposit;
 
-    @Column(name = "refund_amount_pg", nullable = false)
-    private Integer refundAmountPg; // 환불대상액 - 환불 예치금
+    @Column(nullable = false, comment = "PG 환불액 (환불대상액 - 환불 예치금)")
+    private Integer refundAmountPg;
 
     // === 정적 팩토리 메서드 ===
 

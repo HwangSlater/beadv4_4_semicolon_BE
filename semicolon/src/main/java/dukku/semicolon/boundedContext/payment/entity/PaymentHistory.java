@@ -10,10 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-
-import java.util.UUID;
 
 /**
  * 결제 이력 엔티티
@@ -23,7 +19,7 @@ import java.util.UUID;
  * 감사(Audit) 및 장애 발생 시 추적 용도로 사용된다.
  */
 @Entity
-@Table(name = "payment_history")
+@Table(name = "payment_histories")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -31,32 +27,32 @@ import java.util.UUID;
 public class PaymentHistory extends BaseIdAndUUIDAndTime {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payments_id", nullable = false)
+    @JoinColumn(name = "payment_id", nullable = false)
     private Payment payment;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private PaymentHistoryType type; // 기록 유형
+    @Column(nullable = false, comment = "기록 유형")
+    private PaymentHistoryType type;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_status_origin")
-    private PaymentStatus paymentStatusOrigin; // 변경 전 상태
+    @Column(comment = "변경 전 상태")
+    private PaymentStatus paymentStatusOrigin;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_status_changed")
-    private PaymentStatus paymentStatusChanged; // 변경 후 상태
+    @Column(comment = "변경 후 상태")
+    private PaymentStatus paymentStatusChanged;
 
-    @Column(name = "amount_pg_origin")
-    private Integer amountPgOrigin; // 변경 전 PG 승인액
+    @Column(comment = "변경 전 PG 승인액")
+    private Integer amountPgOrigin;
 
-    @Column(name = "amount_pg_changed")
-    private Integer amountPgChanged; // 변경 후 PG 승인액
+    @Column(comment = "변경 후 PG 승인액")
+    private Integer amountPgChanged;
 
-    @Column(name = "payment_deposit_origin")
-    private Integer paymentDepositOrigin; // 변경 전 예치금 사용액
+    @Column(comment = "변경 전 예치금 사용액")
+    private Integer paymentDepositOrigin;
 
-    @Column(name = "payment_deposit_changed")
-    private Integer paymentDepositChanged; // 변경 후 예치금 사용액
+    @Column(comment = "변경 후 예치금 사용액")
+    private Integer paymentDepositChanged;
 
     public static PaymentHistory create(Payment payment, PaymentHistoryType type,
             PaymentStatus paymentStatusOrigin, PaymentStatus paymentStatusChanged,
@@ -80,7 +76,7 @@ public class PaymentHistory extends BaseIdAndUUIDAndTime {
         return PaymentHistoryDto.builder()
                 .id(this.getId())
                 .uuid(this.getUuid())
-                .paymentsId(this.payment.getId())
+                .paymentId(this.payment.getId())
                 .type(this.type)
                 .paymentStatusOrigin(this.paymentStatusOrigin)
                 .paymentStatusChanged(this.paymentStatusChanged)

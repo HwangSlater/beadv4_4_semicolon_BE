@@ -29,7 +29,7 @@ import java.util.List;
  * </ul>
  */
 @Entity
-@Table(name = "refund")
+@Table(name = "refunds")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -37,20 +37,20 @@ import java.util.List;
 public class Refund extends BaseIdAndUUIDAndTime {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_id", nullable = false)
+    @JoinColumn(nullable = false)
     private Payment payment;
 
-    @Column(name = "refund_amount_total", nullable = false)
+    @Column(nullable = false, comment = "총 환불 금액")
     private Integer refundAmountTotal;
 
-    @Column(name = "refund_deposit_total", nullable = false)
+    @Column(nullable = false, comment = "예치금으로 복구된 금액")
     private Integer refundDepositTotal;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "refund_status", nullable = false)
+    @Column(nullable = false, comment = "환불 상태")
     private RefundStatus refundStatus;
 
-    @Column(name = "approved_at")
+    @Column(comment = "환불 승인일")
     private LocalDateTime approvedAt;
 
     @Builder.Default
