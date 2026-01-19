@@ -32,12 +32,12 @@ public class Settlement extends BaseIdAndUUIDAndTime {
     private UUID buyerUuid;
 
     @JdbcTypeCode(SqlTypes.UUID)
-    @Column(name = "payments_id", columnDefinition = "uuid", nullable = false, comment = "결제 UUID")
-    private UUID paymentsId;
+    @Column(name = "payment_id", columnDefinition = "uuid", nullable = false, comment = "결제 UUID")
+    private UUID paymentId;
 
     @JdbcTypeCode(SqlTypes.UUID)
-    @Column(name = "orders_id", columnDefinition = "uuid", nullable = false, comment = "주문 UUID")
-    private UUID ordersId;
+    @Column(name = "order_id", columnDefinition = "uuid", nullable = false, comment = "주문 UUID")
+    private UUID orderId;
 
     @JdbcTypeCode(SqlTypes.UUID)
     @Column(name = "deposit_id", columnDefinition = "uuid", nullable = false, comment = "예치금 UUID")
