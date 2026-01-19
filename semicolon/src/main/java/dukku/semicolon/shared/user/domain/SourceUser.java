@@ -1,11 +1,9 @@
-package dukku.common.global.jpa.entity;
+package dukku.semicolon.shared.user.domain;
 
 import com.github.f4b6a3.uuid.UuidCreator;
+import dukku.semicolon.boundedContext.user.entity.type.UserStatus;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -20,29 +18,41 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Getter
 @SuperBuilder
-public abstract class BaseIdAndUUIDAndTime extends BaseEntity<Integer> {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+public abstract class SourceUser extends BaseUser {
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
+
     @JdbcTypeCode(SqlTypes.UUID)
     @Column(columnDefinition = "uuid", updatable = false, nullable = false, unique = true, comment = "유저 UUID")
     private UUID uuid;
+
     @CreatedDate
-    @Column(nullable = false, updatable = false, comment = "생성일")
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(comment = "수정일")
     private LocalDateTime updatedAt;
+
+    @Column(comment = "탈퇴일")
+    @Setter(AccessLevel.PROTECTED)
+    private LocalDateTime deletedAt;
 
     @PrePersist
     public void prePersist() {
+        // UUID v7 생성
         if (this.uuid == null) {
             this.uuid = UuidCreator.getTimeOrderedEpoch();
+        }
+
+        // Status Active 기본 생성
+        if (this.getStatus() == null) {
+            setStatus(UserStatus.ACTIVE);
         }
     }
 }
