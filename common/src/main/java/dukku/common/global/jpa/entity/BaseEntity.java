@@ -25,7 +25,9 @@ public abstract class BaseEntity<T> implements CanGetModelTypeCode {
     }
 
     public abstract T getId();
+
     public abstract LocalDateTime getCreatedAt();
+
     public abstract LocalDateTime getUpdatedAt();
 
     @Override
