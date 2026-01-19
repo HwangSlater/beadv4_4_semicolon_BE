@@ -31,7 +31,7 @@ import java.util.UUID;
  * @see Payment 실제 결제 정보 (1:N)
  */
 @Entity
-@Table(name = "payment_order")
+@Table(name = "payment_orders")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -39,11 +39,11 @@ import java.util.UUID;
 public class PaymentOrder extends BaseIdAndUUIDAndTime {
 
     @JdbcTypeCode(SqlTypes.UUID)
-    @Column(name = "user_uuid", nullable = false, columnDefinition = "uuid")
+    @Column(nullable = false, columnDefinition = "uuid", comment = "결제 사용자 UUID")
     private UUID userUuid;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, comment = "결제 주문 상태")
     private PaymentOrderStatus status;
 
     @Builder.Default

@@ -28,23 +28,6 @@ import java.util.UUID;
  * 하나의 PaymentOrder에 여러 Payment가 연결될 수 있으며,
  * 각 Payment는 복수의 PaymentOrderItem(스냅샷)과 Refund를 가질 수 있다.
  * 
- * <h3>금액 필드 설명</h3>
- * <ul>
- * <li>{@code amount} - 주문 총액 (쿠폰 적용 전)</li>
- * <li>{@code paymentCouponTotal} - 쿠폰으로 할인된 총액</li>
- * <li>{@code paymentDepositOrigin} - 결제 체결 시점의 예치금 사용액 (불변)</li>
- * <li>{@code paymentDeposit} - 현재 적용된 예치금 (환불로 변동 가능)</li>
- * <li>{@code amountPgOrigin} - 결제 체결 시점의 PG 승인액 (불변)</li>
- * <li>{@code amountPg} - 현재 PG 승인액 (환불로 변동 가능)</li>
- * <li>{@code refundTotal} - 누적 환불 총액</li>
- * </ul>
- * 
- * <h3>결제 유형</h3>
- * <ul>
- * <li>DEPOSIT - 예치금 전액 결제</li>
- * <li>MIXED - 예치금 + PG 복합 결제</li>
- * </ul>
- * 
  * @see PaymentOrder 결제 주문 (레플리카)
  * @see PaymentOrderItem 결제 주문 상품 (스냅샷)
  * @see Refund 환불 정보
@@ -58,48 +41,48 @@ import java.util.UUID;
 public class Payment extends BaseIdAndUUIDAndTime {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_order_id", nullable = false)
+    @JoinColumn(nullable = false)
     private PaymentOrder paymentOrder;
 
     @JdbcTypeCode(SqlTypes.UUID)
-    @Column(name = "user_uuid", nullable = false, columnDefinition = "uuid")
+    @Column(nullable = false, columnDefinition = "uuid", comment = "결제 유저 UUID")
     private UUID userUuid;
 
-    @Column(nullable = false, columnDefinition = "integer default 0")
-    private Integer amount; // 주문 총액
+    @Column(nullable = false, columnDefinition = "integer default 0", comment = "주문 총액")
+    private Integer amount;
 
-    @Column(name = "payment_deposit_origin", nullable = false, columnDefinition = "integer default 0")
-    private Integer paymentDepositOrigin; // 최초 예치금 사용액
+    @Column(nullable = false, columnDefinition = "integer default 0", comment = "최초 예치금 사용액 (결제 체결 시점 원본)")
+    private Integer paymentDepositOrigin;
 
-    @Column(name = "payment_deposit", nullable = false, columnDefinition = "integer default 0")
-    private Integer paymentDeposit; // 현재 적용 예치금
+    @Column(nullable = false, columnDefinition = "integer default 0", comment = "현재 적용된 예치금 (환불로 변동 가능)")
+    private Integer paymentDeposit;
 
-    @Column(name = "amount_pg_origin", nullable = false, columnDefinition = "integer default 0")
-    private Integer amountPgOrigin; // 최초 PG 승인액
+    @Column(nullable = false, columnDefinition = "integer default 0", comment = "현재 PG 승인액 (환불로 변동 가능)")
+    private Integer amountPg;
 
-    @Column(name = "amount_pg", nullable = false, columnDefinition = "integer default 0")
-    private Integer amountPg; // 현재 PG 승인액 (환불로 변동)
+    @Column(nullable = false, columnDefinition = "integer default 0", comment = "최초 PG 승인액 (결제 체결 시점 원본)")
+    private Integer amountPgOrigin;
 
-    @Column(name = "payment_coupon_total", nullable = false, columnDefinition = "integer default 0")
-    private Integer paymentCouponTotal; // 쿠폰 할인 총액
+    @Column(nullable = false, columnDefinition = "integer default 0", comment = "쿠폰 총 할인액")
+    private Integer paymentCouponTotal;
 
-    @Column(name = "refund_total", nullable = false, columnDefinition = "integer default 0")
-    private Integer refundTotal; // 환불 총액
+    @Column(nullable = false, columnDefinition = "integer default 0", comment = "누적 환불 총액")
+    private Integer refundTotal;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_type", nullable = false)
+    @Column(nullable = false, comment = "결제 수단 (DEPOSIT, MIXED)")
     private PaymentType paymentType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_status", nullable = false)
+    @Column(nullable = false, comment = "결제 상태")
     private PaymentStatus paymentStatus;
 
     @Convert(converter = AesGcmConverter.class)
-    @Column(name = "pg_payment_key", length = 50)
-    private String pgPaymentKey; // 토스페이먼츠 결제키 (암호화)
+    @Column(length = 50, comment = "토스페이먼츠 결제키 (암호화)")
+    private String pgPaymentKey;
 
-    @Column(name = "approved_at")
-    private LocalDateTime approvedAt; // 결제 승인 시점
+    @Column(comment = "결제 승인 시점")
+    private LocalDateTime approvedAt;
 
     @Builder.Default
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -6,5 +6,5 @@ package dukku.semicolon.boundedContext.payment.entity.enums;
 public enum RefundStatus {
     PENDING, // 환불 대기
     COMPLETED, // 환불 완료
-    CANCELLED // 환불 취소
+    CANCELED // 환불 취소
 }

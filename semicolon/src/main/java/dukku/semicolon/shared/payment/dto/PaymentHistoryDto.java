@@ -20,7 +20,7 @@ import java.util.UUID;
 public class PaymentHistoryDto {
     private Integer id;
     private UUID uuid;
-    private Integer paymentsId;
+    private Integer paymentId;
     private PaymentHistoryType type;
     private PaymentStatus paymentStatusOrigin;
     private PaymentStatus paymentStatusChanged;
