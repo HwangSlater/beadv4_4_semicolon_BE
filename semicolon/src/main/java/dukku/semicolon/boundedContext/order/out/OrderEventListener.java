@@ -38,7 +38,6 @@ public class OrderEventListener {
      * retry 실패 할 경우 로그를 남기며 보상 트랜잭션 실행
      * TODO: 최종 프로젝트에서 환불 적용.
      */
-    @Async
     @Retryable(backoff = @Backoff(delay = 1000))
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)

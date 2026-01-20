@@ -1,7 +1,6 @@
 package dukku.semicolon.boundedContext.order.app;
 
 import dukku.common.shared.order.type.OrderItemStatus;
-import dukku.common.shared.order.type.OrderStatus;
 import dukku.semicolon.boundedContext.order.entity.Order;
 import dukku.semicolon.shared.order.dto.*;
 import lombok.RequiredArgsConstructor;
