@@ -35,12 +35,13 @@ public class ProductImage extends BaseIdAndUUIDAndTime {
     @Column(nullable = false, comment = "썸네일 여부")
     private boolean isThumbnail;
 
-    public static ProductImage create(Product product, String imageUrl, int sortOrder, boolean isThumbnail) {
+    public static ProductImage create(Product product, String imageUrl, int sortOrder) {
+        if (sortOrder < 1) throw new IllegalArgumentException("sortOrder는 1 이상이어야 합니다.");
         return ProductImage.builder()
                 .product(product)
                 .imageUrl(imageUrl)
                 .sortOrder(sortOrder)
-                .isThumbnail(isThumbnail)
+                .isThumbnail(sortOrder == 1)
                 .build();
     }
 }

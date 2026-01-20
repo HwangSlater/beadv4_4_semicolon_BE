@@ -5,15 +5,14 @@ import dukku.common.shared.product.type.ConditionStatus;
 import dukku.common.shared.product.type.SaleStatus;
 import dukku.common.shared.product.type.VisibilityStatus;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -130,5 +129,18 @@ public class Product extends BaseIdAndUUIDAndTime {
     public void reserve(UUID orderUuid) {
         this.saleStatus = SaleStatus.RESERVED;
         this.reservedOrderUuid = orderUuid;
+    }
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ProductImage> images = new ArrayList<>();
+
+    public void addImage(String imageUrl) {
+        int nextSortOrder = images.stream()
+                .mapToInt(ProductImage::getSortOrder)
+                .max()
+                .orElse(0) + 1;
+
+        images.add(ProductImage.create(this, imageUrl, nextSortOrder));
     }
 }
