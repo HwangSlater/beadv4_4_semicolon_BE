@@ -85,13 +85,13 @@ public class Product extends BaseIdAndUUIDAndTime {
     private VisibilityStatus visibilityStatus;
 
     @Column(nullable = false, comment = "조회수")
-    private Integer viewCount;
+    private int viewCount;
 
     @Column(nullable = false, comment = "좋아요 수")
-    private Integer likeCount;
+    private int likeCount;
 
     @Column(nullable = false, comment = "댓글 수")
-    private Integer commentCount;
+    private int commentCount;
 
     @Column(comment = "삭제일(소프트 삭제)")
     private LocalDateTime deletedAt;

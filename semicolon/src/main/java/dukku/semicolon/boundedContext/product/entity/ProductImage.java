@@ -30,17 +30,17 @@ public class ProductImage extends BaseIdAndUUIDAndTime {
     private String imageUrl;
 
     @Column(nullable = false, comment = "정렬 순서")
-    private Integer sortOrder;
+    private int sortOrder;
 
     @Column(nullable = false, comment = "썸네일 여부")
-    private Boolean isThumbnail;
+    private boolean isThumbnail;
 
-    public static ProductImage create(Product product, String imageUrl, Integer sortOrder, Boolean isThumbnail) {
+    public static ProductImage create(Product product, String imageUrl, int sortOrder, boolean isThumbnail) {
         return ProductImage.builder()
                 .product(product)
                 .imageUrl(imageUrl)
-                .sortOrder(sortOrder == null ? 1 : sortOrder)
-                .isThumbnail(isThumbnail != null && isThumbnail)
+                .sortOrder(sortOrder)
+                .isThumbnail(isThumbnail)
                 .build();
     }
 }

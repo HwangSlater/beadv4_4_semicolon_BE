@@ -33,10 +33,10 @@ public class ProductSeller extends BaseIdAndUUIDAndTime {
     private String intro;
 
     @Column(nullable = false, comment = "누적 판매 횟수")
-    private Integer salesCount;
+    private int salesCount;
 
     @Column(nullable = false, comment = "현재 판매중 상품 수")
-    private Integer activeListingCount;
+    private int activeListingCount;
 
     public static ProductSeller create(UUID userUuid, String intro) {
         return ProductSeller.builder()
