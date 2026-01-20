@@ -23,6 +23,10 @@ public class User extends SourceUser {
     @Column(length = 100, nullable = false, comment = "암호화된 비밀번호")
     private String password;
 
+    @Override
+    public Integer getId() {
+        return this.getInteger();
+    }
     public static User createUser(UserRegisterRequest req, Role role) {
         return User.builder()
                 .email(req.getEmail())
