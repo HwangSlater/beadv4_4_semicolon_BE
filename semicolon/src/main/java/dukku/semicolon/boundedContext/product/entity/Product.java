@@ -55,10 +55,10 @@ public class Product extends BaseIdAndUUIDAndTime {
     private String description;
 
     @Column(nullable = false, comment = "상품 가격")
-    private Integer price;
+    private Long price;
 
     @Column(nullable = false, comment = "배송비")
-    private Integer shippingFee;
+    private Long shippingFee;
 
     @Enumerated(EnumType.STRING)
     @Column(
@@ -105,8 +105,8 @@ public class Product extends BaseIdAndUUIDAndTime {
             Category category,
             String title,
             String description,
-            Integer price,
-            Integer shippingFee,
+            Long price,
+            Long shippingFee,
             ConditionStatus conditionStatus
     ) {
         return Product.builder()
@@ -115,7 +115,7 @@ public class Product extends BaseIdAndUUIDAndTime {
                 .title(title)
                 .description(description)
                 .price(price)
-                .shippingFee(shippingFee == null ? 0 : shippingFee)
+                .shippingFee(shippingFee == null ? 0L : shippingFee)
 
                 .conditionStatus(conditionStatus == null ? ConditionStatus.SEALED : conditionStatus)
                 .saleStatus(SaleStatus.ON_SALE)
