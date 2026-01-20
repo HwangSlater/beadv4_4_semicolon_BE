@@ -35,10 +35,12 @@ public class ProductImage extends BaseIdAndUUIDAndTime {
     @Column(nullable = false, comment = "썸네일 여부")
     private Boolean isThumbnail;
 
-    @PrePersist
-    public void prePersist() {
-        super.prePersist();
-        if (this.sortOrder == null) this.sortOrder = 1;
-        if (this.isThumbnail == null) this.isThumbnail = false;
+    public static ProductImage create(Product product, String imageUrl, Integer sortOrder, Boolean isThumbnail) {
+        return ProductImage.builder()
+                .product(product)
+                .imageUrl(imageUrl)
+                .sortOrder(sortOrder == null ? 1 : sortOrder)
+                .isThumbnail(isThumbnail != null && isThumbnail)
+                .build();
     }
 }

@@ -38,10 +38,12 @@ public class ProductSeller extends BaseIdAndUUIDAndTime {
     @Column(nullable = false, comment = "현재 판매중 상품 수")
     private Integer activeListingCount;
 
-    @PrePersist
-    public void prePersist() {
-        super.prePersist();
-        if (this.salesCount == null) this.salesCount = 0;
-        if (this.activeListingCount == null) this.activeListingCount = 0;
+    public static ProductSeller create(UUID userUuid, String intro) {
+        return ProductSeller.builder()
+                .userUuid(userUuid)
+                .intro(intro)
+                .salesCount(0)
+                .activeListingCount(0)
+                .build();
     }
 }

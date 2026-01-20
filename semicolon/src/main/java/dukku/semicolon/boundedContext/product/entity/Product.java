@@ -100,16 +100,35 @@ public class Product extends BaseIdAndUUIDAndTime {
     @Column(columnDefinition = "uuid", comment = "현재 예약 중인 주문 UUID")
     private UUID reservedOrderUuid;
 
-    @PrePersist
-    public void prePersist() {
-        super.prePersist();
-        if (this.shippingFee == null) this.shippingFee = 0;
-        if (this.viewCount == null) this.viewCount = 0;
-        if (this.likeCount == null) this.likeCount = 0;
-        if (this.commentCount == null) this.commentCount = 0;
+    public static Product create(
+            UUID sellerUuid,
+            Category category,
+            String title,
+            String description,
+            Integer price,
+            Integer shippingFee,
+            ConditionStatus conditionStatus
+    ) {
+        return Product.builder()
+                .sellerUuid(sellerUuid)
+                .category(category)
+                .title(title)
+                .description(description)
+                .price(price)
+                .shippingFee(shippingFee == null ? 0 : shippingFee)
 
-        if (this.conditionStatus == null) this.conditionStatus = ConditionStatus.SEALED;
-        if (this.saleStatus == null) this.saleStatus = SaleStatus.ON_SALE;
-        if (this.visibilityStatus == null) this.visibilityStatus = VisibilityStatus.VISIBLE;
+                .conditionStatus(conditionStatus == null ? ConditionStatus.SEALED : conditionStatus)
+                .saleStatus(SaleStatus.ON_SALE)
+                .visibilityStatus(VisibilityStatus.VISIBLE)
+
+                .viewCount(0)
+                .likeCount(0)
+                .commentCount(0)
+                .build();
+    }
+
+    public void reserve(UUID orderUuid) {
+        this.saleStatus = SaleStatus.RESERVED;
+        this.reservedOrderUuid = orderUuid;
     }
 }

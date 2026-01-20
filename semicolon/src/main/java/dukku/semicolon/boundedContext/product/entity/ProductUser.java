@@ -37,8 +37,11 @@ public class ProductUser {
     )
     private AccountStatus status;
 
-    @PrePersist
-    public void prePersist() {
-        if (this.status == null) this.status = AccountStatus.ACTIVE;
+    public static ProductUser create(UUID userUuid, String nickname) {
+        return ProductUser.builder()
+                .userUuid(userUuid)
+                .nickname(nickname)
+                .status(AccountStatus.ACTIVE)
+                .build();
     }
 }
