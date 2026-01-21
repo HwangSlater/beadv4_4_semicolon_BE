@@ -1,9 +1,6 @@
 package dukku.common.global.jpa.entity;
 
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -16,12 +13,16 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @Getter
-public abstract class BaseIdAndTime extends BaseEntity {
+public abstract class BaseIdAndTime extends BaseEntity<Integer> {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private int id;
+    private Integer id;
+
     @CreatedDate
-    private LocalDateTime createDate;
+    @Column(nullable = false, updatable = false, comment = "생성일")
+    private LocalDateTime createdAt;
+
     @LastModifiedDate
-    private LocalDateTime modifyDate;
+    @Column(comment = "수정일")
+    private LocalDateTime updatedAt;
 }
