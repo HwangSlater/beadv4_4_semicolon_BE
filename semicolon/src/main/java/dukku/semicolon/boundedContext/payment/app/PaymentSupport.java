@@ -2,10 +2,10 @@ package dukku.semicolon.boundedContext.payment.app;
 
 import dukku.semicolon.boundedContext.payment.entity.Payment;
 import dukku.semicolon.boundedContext.payment.entity.PaymentHistory;
-import dukku.semicolon.boundedContext.payment.entity.PaymentOrder;
+import dukku.semicolon.boundedContext.payment.entity.PaymentOrderItem;
 import dukku.semicolon.boundedContext.payment.entity.Refund;
 import dukku.semicolon.boundedContext.payment.out.PaymentHistoryRepository;
-import dukku.semicolon.boundedContext.payment.out.PaymentOrderRepository;
+import dukku.semicolon.boundedContext.payment.out.PaymentOrderItemRepository;
 import dukku.semicolon.boundedContext.payment.out.PaymentRepository;
 import dukku.semicolon.boundedContext.payment.out.RefundRepository;
 import dukku.semicolon.shared.payment.exception.PaymentNotFoundException;
@@ -28,9 +28,9 @@ import java.util.UUID;
 public class PaymentSupport {
 
     private final PaymentRepository paymentRepository;
-    private final PaymentOrderRepository paymentOrderRepository;
     private final PaymentHistoryRepository paymentHistoryRepository;
     private final RefundRepository refundRepository;
+    private final PaymentOrderItemRepository paymentOrderItemRepository;
 
     // === Payment 관련 ===
 
@@ -40,6 +40,13 @@ public class PaymentSupport {
     public Payment findPaymentByUuid(UUID uuid) {
         return paymentRepository.findByUuid(uuid)
                 .orElseThrow(PaymentNotFoundException::new);
+    }
+
+    /**
+     * 결제 아이템 조회 (Payment ID + Order Item UUID)
+     */
+    public Optional<PaymentOrderItem> findPaymentOrderItem(int paymentId, UUID orderItemUuid) {
+        return paymentOrderItemRepository.findByPaymentIdAndOrderItemUuid(paymentId, orderItemUuid);
     }
 
     /**
@@ -57,6 +64,13 @@ public class PaymentSupport {
     }
 
     /**
+     * 주문 UUID로 결제 목록 조회
+     */
+    public List<Payment> findPaymentsByOrderUuid(UUID orderUuid) {
+        return paymentRepository.findByOrderUuid(orderUuid);
+    }
+
+    /**
      * PG 결제키로 결제 조회
      */
     public Optional<Payment> findPaymentByPgPaymentKey(String pgPaymentKey) {
@@ -68,22 +82,6 @@ public class PaymentSupport {
      */
     public Payment savePayment(Payment payment) {
         return paymentRepository.save(payment);
-    }
-
-    // === PaymentOrder 관련 ===
-
-    /**
-     * UUID로 결제 주문 조회 (Optional)
-     */
-    public Optional<PaymentOrder> findPaymentOrderByUuid(UUID uuid) {
-        return paymentOrderRepository.findByUuid(uuid);
-    }
-
-    /**
-     * 결제 주문 저장
-     */
-    public PaymentOrder savePaymentOrder(PaymentOrder paymentOrder) {
-        return paymentOrderRepository.save(paymentOrder);
     }
 
     // === PaymentHistory 관련 ===
