@@ -3,8 +3,10 @@ package dukku.semicolon.global.auth.controller;
 import dukku.semicolon.global.auth.dto.LoginRequest;
 import dukku.semicolon.global.auth.dto.TokenResponse;
 import dukku.semicolon.global.auth.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +20,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(
-            @RequestBody LoginRequest request
+            @RequestBody @Validated LoginRequest request
     ) {
         return ResponseEntity.ok(authService.login(request));
     }

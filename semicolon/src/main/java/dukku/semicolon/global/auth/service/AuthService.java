@@ -4,6 +4,8 @@ import dukku.semicolon.boundedContext.user.entity.User;
 import dukku.semicolon.boundedContext.user.out.UserRepository;
 import dukku.semicolon.global.auth.dto.LoginRequest;
 import dukku.semicolon.global.auth.dto.TokenResponse;
+import dukku.semicolon.global.auth.exception.InvalidPasswordException;
+import dukku.semicolon.global.auth.exception.NotFoundException;
 import dukku.semicolon.global.auth.jwt.AuthTokenIssuer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,17 +21,17 @@ public class AuthService {
     public TokenResponse login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() ->  new NotFoundException("존재하지 않는 회원입니다."));
 
         if (!passwordEncoder.matches(
                 request.getPassword(),
                 user.getPassword()
         )) {
-            throw new RuntimeException("Invalid password");
+            throw new InvalidPasswordException("비밀번호가 올바르지 않습니다.");
         }
 
         String token = authTokenIssuer.issue(
-                user.getUuid(),   // ✅ UUID
+                user.getUuid(),
                 user.getRole()
         );
 

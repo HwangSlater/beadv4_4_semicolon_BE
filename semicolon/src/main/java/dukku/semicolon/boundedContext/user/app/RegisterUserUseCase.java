@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class RegisterUserUseCase {
 
     private final dukku.semicolon.boundedContext.user.app.UserSupport support;
-    private final ApplicationEventPublisher springEventPublisher; // ✅ 이름 변경(충돌 제거)
+    private final ApplicationEventPublisher springEventPublisher;
 
     @Transactional
     public User execute(UserRegisterRequest req, Role role) {
@@ -26,7 +26,7 @@ public class RegisterUserUseCase {
                 .orElseGet(() -> createNew(req, role));
 
         User saved = support.save(userCandidate);
-        //회원가입 완료 스프링 이벤트 발행
+        // 회원가입 완료 스프링 이벤트 발행
         springEventPublisher.publishEvent(new UserJoinedEvent(User.toUserDto(saved)));
         return saved;
     }

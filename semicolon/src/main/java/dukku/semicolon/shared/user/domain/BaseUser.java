@@ -16,7 +16,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 
-public abstract class BaseUser extends BaseEntity<Integer>{
+public abstract class BaseUser extends BaseEntity<Integer> {
 
 
     @Column(length = 100, unique = true, nullable = false, comment = "이메일 (로그인 ID)")

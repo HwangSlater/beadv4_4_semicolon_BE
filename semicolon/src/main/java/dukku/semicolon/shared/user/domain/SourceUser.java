@@ -27,8 +27,6 @@ public abstract class SourceUser extends BaseUser {
     @Id
     @GeneratedValue(strategy = IDENTITY)
 
-    //private int id;
-//
 
     private Integer id;
 
