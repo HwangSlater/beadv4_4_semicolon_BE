@@ -2,6 +2,7 @@ package dukku.semicolon.boundedContext.deposit.in;
 
 import dukku.common.shared.payment.event.PaymentSuccessEvent;
 import dukku.common.shared.payment.event.RefundCompletedEvent;
+import dukku.common.shared.settlement.event.SettlementPayoutRequestedEvent;
 import dukku.semicolon.boundedContext.deposit.app.DepositFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,34 +51,20 @@ public class DepositEventListener {
                 event.orderUuid());
     }
 
-    /*
-     * TODO: 추후 정산(Settlement) 도메인 구현 및 이벤트(SettlementCompletedEvent) 정의 시 주석 해제 및
-     * 구현
+    /**
+     * 정산 지급 요청 시 예치금 충전 처리
      *
-     * 정산 완료 시 판매자 예치금을 입금(충전) 처리한다.
-     *
-     * @Async
-     * 
-     * @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-     * 
-     * @Transactional(propagation = Propagation.REQUIRES_NEW)
-     * public void handle(SettlementCompletedEvent event) {
-     * if (event.amount() == null || event.amount() <= 0) {
-     * return;
-     * }
-     * 
-     * try {
-     * increaseDepositUseCase.increase(
-     * event.userUuid(), // 또는 event.depositUuid()로 조회
-     * event.amount(),
-     * DepositHistoryType.SETTLEMENT,
-     * // event.orderItemUuid() // 정산 대상 아이템
-     * );
-     * 
-     * // 성공 로그 or 이벤트
-     * } catch (Exception e) {
-     * log.error("[정산 예치금 충전 실패] ... ", e);
-     * }
-     * }
+     * <p>
+     * SettlementPayoutRequestedEvent 수신 시 예치금을 충전한다.
+     * 충전 성공 시 DepositChargeSucceededEvent 발행.
+     * 충전 실패 시 DepositChargeFailedEvent 발행.
      */
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handle(SettlementPayoutRequestedEvent event) {
+        depositFacade.chargeDepositForSettlement(
+                event.userUuid(),
+                event.amount(),
+                event.settlementUuid());
+    }
 }
