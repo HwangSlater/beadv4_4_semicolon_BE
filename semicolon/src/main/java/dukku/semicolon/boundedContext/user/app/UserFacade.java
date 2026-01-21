@@ -21,6 +21,7 @@ public class UserFacade {
     private final FindUserUseCase findUser;
     private final UpdateUserUseCase updateUser;
     private final ChangePasswordUseCase changePassword;
+    private final WithdrawUserUseCase withdrawUserUseCase;
 
     public UserResponse registerUser(UserRegisterRequest req, Role role) {
         return User.toUserResponse(registerUser.execute(req, role));
@@ -37,5 +38,9 @@ public class UserFacade {
 
     public void updateUserPassword(PasswordUpdateRequest req) {
         changePassword.execute(req);
+    }
+
+    public void withdraw(UUID userUuid) {
+        withdrawUserUseCase.withdraw(userUuid);
     }
 }
