@@ -35,12 +35,6 @@ public class FindProductListUseCase {
                 ? productRepository.findByVisibilityStatusAndDeletedAtIsNull(VisibilityStatus.VISIBLE, pageable)
                 : productRepository.findByCategory_IdAndVisibilityStatusAndDeletedAtIsNull(categoryId, VisibilityStatus.VISIBLE, pageable);
 
-        return ProductListResponse.builder()
-                .items(result.getContent().stream().map(ProductMapper::toListItem).toList())
-                .page(result.getNumber())
-                .size(result.getSize())
-                .totalCount(result.getTotalElements())
-                .hasNext(result.hasNext())
-                .build();
+        return ProductListResponse.from(result);
     }
 }
