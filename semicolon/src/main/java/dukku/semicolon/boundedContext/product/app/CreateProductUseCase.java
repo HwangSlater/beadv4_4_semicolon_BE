@@ -22,22 +22,22 @@ public class CreateProductUseCase {
 
     public Product execute(UUID sellerUuid, ProductCreateRequest request) {
 
-        if (!productSupport.existsByCategoryId(request.categoryId())) {
+        if (!productSupport.existsByCategoryId(request.getCategoryId())) {
             throw new ProductCategoryNotFoundException();
         }
 
-        Category category = categoryRepository.getReferenceById(request.categoryId());
+        Category category = categoryRepository.getReferenceById(request.getCategoryId());
         Product product = Product.create(
                 sellerUuid,
                 category,
-                request.title(),
-                request.description(),
-                request.price(),
-                request.shippingFee(),
-                request.conditionStatus()
+                request.getTitle(),
+                request.getDescription(),
+                request.getPrice(),
+                request.getShippingFee(),
+                request.getConditionStatus()
         );
 
-        List<String> imageUrls = request.imageUrls();
+        List<String> imageUrls = request.getImageUrls();
         if (imageUrls != null && !imageUrls.isEmpty()) {
             productSupport.validateImageCount(product.getImages().size(), imageUrls.size());
             imageUrls.forEach(product::addImage);

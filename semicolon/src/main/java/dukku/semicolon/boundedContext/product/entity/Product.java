@@ -104,7 +104,6 @@ public class Product extends BaseIdAndUUIDAndTime {
             Long shippingFee,
             ConditionStatus conditionStatus
     ) {
-
         return Product.builder()
                 .sellerUuid(sellerUuid)
                 .category(category)
@@ -133,7 +132,6 @@ public class Product extends BaseIdAndUUIDAndTime {
     private List<ProductImage> images = new ArrayList<>();
 
     public void addImage(String imageUrl) {
-
         int nextSortOrder = images.stream()
                 .mapToInt(ProductImage::getSortOrder)
                 .max()
