@@ -10,6 +10,7 @@ import dukku.semicolon.shared.payment.exception.AmountMismatchException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -145,7 +146,5 @@ public class RequestPaymentUseCase {
         // TODO: 향후 한 주문에 대해 여러 번 결제 시도 시의 고유성 보장이 필요한 경우 정책에 따라 수정
         String datePart = LocalDateTime.now().toLocalDate().toString().replace("-", "");
         return "TOSS_" + paymentUuid.toString().substring(0, 8) + "_" + datePart;
-    }
-
     }
 }

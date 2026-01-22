@@ -2,7 +2,6 @@ package dukku.semicolon.boundedContext.deposit.in;
 
 import dukku.common.shared.payment.event.PaymentSuccessEvent;
 import dukku.common.shared.payment.event.RefundCompletedEvent;
-import dukku.common.shared.settlement.event.SettlementPayoutRequestedEvent;
 import dukku.semicolon.boundedContext.deposit.app.DepositFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
