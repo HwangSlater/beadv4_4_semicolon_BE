@@ -14,17 +14,26 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class SettlementFacade {
 
+    private final GetSettlementUseCase getSettlementUseCase;
     private final GetSettlementListUseCase getSettlementListUseCase;
     private final GetSettlementStatisticsUseCase getSettlementStatisticsUseCase;
     private final CreateSettlementUseCase createSettlementUseCase;
     private final SettlementSupport settlementSupport;
     private final RequestDepositChargeUseCase requestDepositChargeUseCase;
 
+
+    @Transactional(readOnly = true)
+    public SettlementResponse getSettlement(UUID settlementUuid) {
+        Settlement settlement = getSettlementUseCase.execute(settlementUuid);
+        return toResponse(settlement);
+    }
 
     @Transactional(readOnly = true)
     public Page<SettlementResponse> getSettlements(SettlementSearchCondition condition, Pageable pageable) {

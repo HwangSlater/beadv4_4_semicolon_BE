@@ -14,6 +14,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/admin/settlements")
 @RequiredArgsConstructor
@@ -34,6 +36,16 @@ public class SettlementController {
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return settlementFacade.getSettlements(request.toCondition(), pageable);
+    }
+
+    /**
+     * 정산 단건 조회
+     * GET /admin/settlements/{settlementUuid}
+     */
+    @GetMapping("/{settlementUuid}")
+    // TODO: @SettlementApiDocs.GetSettlement 추가
+    public SettlementResponse getSettlement(@PathVariable UUID settlementUuid) {
+        return settlementFacade.getSettlement(settlementUuid);
     }
 
     /**
