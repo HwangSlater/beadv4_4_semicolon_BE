@@ -1,5 +1,8 @@
 package dukku.semicolon.boundedContext.settlement.app;
 
+import dukku.common.shared.deposit.event.DepositChargeFailedEvent;
+import dukku.common.shared.deposit.event.DepositChargeSucceededEvent;
+import dukku.common.shared.order.event.OrderItemConfirmedEvent;
 import dukku.semicolon.boundedContext.settlement.entity.Settlement;
 import dukku.semicolon.shared.settlement.dto.SettlementResponse;
 import dukku.semicolon.shared.settlement.dto.SettlementSearchCondition;
@@ -34,27 +37,25 @@ public class SettlementFacade {
         return getSettlementStatisticsUseCase.execute(condition);
     }
 
-//    public Settlement requestDepositCharge(Settlement settlement) {
-//        // TODO: 예치금 충전 요청
-//        return requestDepositChargeUseCase.execute(settlement);
-//    }
-//
-//    public void createSettlement(OrderItemConfirmedEvent event) {
-//        createSettlementUseCase.execute(event);
-//    }
-//
-//
-//    public void completeSettlement(DepositChargeSuccedEvent event) {
-//        Settlement settlement = settlementSupport.findByUuid(event.settlementUuid());
-//        settlement.complete();
-//        settlementSupport.save(settlement);
-//    }
-//
-//    public void failSettlement(DepositChargeFailedEvent event) {
-//        Settlement settlement = settlementSupport.findByUuid(event.settlementUuid());
-//        settlement.fail();
-//        settlementSupport.save(settlement);
-//    }
+    public void createSettlement(OrderItemConfirmedEvent event) {
+        createSettlementUseCase.execute(event);
+    }
+
+    public Settlement requestDepositCharge(Settlement settlement) {
+        return requestDepositChargeUseCase.execute(settlement);
+    }
+
+    public void completeSettlement(DepositChargeSucceededEvent event) {
+        Settlement settlement = settlementSupport.findByUuid(event.settlementUuid());
+        settlement.complete();
+        settlementSupport.save(settlement);
+    }
+
+    public void failSettlement(DepositChargeFailedEvent event) {
+        Settlement settlement = settlementSupport.findByUuid(event.settlementUuid());
+        settlement.fail();
+        settlementSupport.save(settlement);
+    }
 
     /**
      * TODO: 외부 서비스 호출로 sellerNickname, productName, bankName, accountNumber 조회

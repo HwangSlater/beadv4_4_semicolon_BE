@@ -1,5 +1,8 @@
 package dukku.semicolon.boundedContext.settlement.in;
 
+import dukku.common.shared.deposit.event.DepositChargeFailedEvent;
+import dukku.common.shared.deposit.event.DepositChargeSucceededEvent;
+import dukku.common.shared.order.event.OrderItemConfirmedEvent;
 import dukku.semicolon.boundedContext.settlement.app.SettlementFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,29 +21,38 @@ public class SettlementEventListener {
 
     private final SettlementFacade settlementFacade;
 
-    /*
-    TODO: order, deposit이벤트 필요
+    /**
+     * 구매 확정 이벤트 핸들러
+     * - OrderItem 구매 확정 시 Settlement 생성 (PENDING 상태)
      */
+    @TransactionalEventListener(phase = AFTER_COMMIT)
+    @Transactional(propagation = REQUIRES_NEW)
+    public void handle(OrderItemConfirmedEvent event) {
+        log.info("[정산 이벤트] 구매 확정 이벤트 수신. orderItemUuid={}", event.orderItemUuid());
+        settlementFacade.createSettlement(event);
+    }
 
-//    @TransactionalEventListener(phase = AFTER_COMMIT)
-//    @Transactional(propagation = REQUIRES_NEW)
-//    public void handle(OrderItemConfirmedEvent event) {
-//        log.info("구매 확정 이벤트 수신");
-//        settlementFacade.createSettlement(event);
-//    }
-//
-//    @TransactionalEventListener(phase = AFTER_COMMIT)
-//    @Transactional(propagation = REQUIRES_NEW)
-//    public void handle(DepositChargeSuccedEvent event) {
-//        log.info("예치금 충전 성공 이벤트 수신");
-//        settlementFacade.completeSettlement(event);
-//    }
-//
-//    @TransactionalEventListener(phase = AFTER_COMMIT)
-//    @Transactional(propagation = REQUIRES_NEW)
-//    public void handle(DepositChargeFailedEvent event) {
-//        log.error("예치금 충전 실패 이벤트 수신");
-//        settlementFacade.failSettlement(event);
-//    }
+    /**
+     * 예치금 충전 성공 이벤트 핸들러
+     * - Settlement 상태를 SUCCESS로 변경
+     */
+    @TransactionalEventListener(phase = AFTER_COMMIT)
+    @Transactional(propagation = REQUIRES_NEW)
+    public void handle(DepositChargeSucceededEvent event) {
+        log.info("[정산 이벤트] 예치금 충전 성공 이벤트 수신. settlementUuid={}", event.settlementUuid());
+        settlementFacade.completeSettlement(event);
+    }
+
+    /**
+     * 예치금 충전 실패 이벤트 핸들러
+     * - Settlement 상태를 FAILED로 변경
+     */
+    @TransactionalEventListener(phase = AFTER_COMMIT)
+    @Transactional(propagation = REQUIRES_NEW)
+    public void handle(DepositChargeFailedEvent event) {
+        log.error("[정산 이벤트] 예치금 충전 실패 이벤트 수신. settlementUuid={}, reason={}",
+                event.settlementUuid(), event.reason());
+        settlementFacade.failSettlement(event);
+    }
 
 }

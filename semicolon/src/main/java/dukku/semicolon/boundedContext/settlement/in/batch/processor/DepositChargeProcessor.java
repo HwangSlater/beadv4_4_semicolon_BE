@@ -16,7 +16,7 @@ public class DepositChargeProcessor implements ItemProcessor<Settlement, Settlem
 
     @Override
     public Settlement process(Settlement settlement) throws Exception {
-        // TODO: 예치금 충전 요청
+
         return settlementFacade.requestDepositCharge(settlement);
     }
 }
