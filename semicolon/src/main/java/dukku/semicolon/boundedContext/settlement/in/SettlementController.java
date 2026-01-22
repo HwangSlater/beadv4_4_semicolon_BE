@@ -43,7 +43,7 @@ public class SettlementController {
      * GET /admin/settlements/{settlementUuid}
      */
     @GetMapping("/{settlementUuid}")
-    // TODO: @SettlementApiDocs.GetSettlement 추가
+    @SettlementApiDocs.GetSettlement
     public SettlementResponse getSettlement(@PathVariable UUID settlementUuid) {
         return settlementFacade.getSettlement(settlementUuid);
     }
