@@ -75,8 +75,9 @@ public class Settlement extends BaseIdAndUUIDAndTime {
         if (this.settlementStatus == null) {
             this.settlementStatus = SettlementStatus.PENDING;
         }
+        // fee는 반드시 외부에서 주입받아야 함 (application.yml → UseCase → Settlement.create)
         if (this.fee == null) {
-            this.fee = SettlementFeePolicy.DEFAULT_FEE_RATE;
+            throw new IllegalStateException("수수료율(fee)은 필수입니다. Settlement.create()를 통해 생성하세요.");
         }
     }
 
@@ -86,6 +87,8 @@ public class Settlement extends BaseIdAndUUIDAndTime {
      * 정산 생성 정적 팩토리 메서드
      * - 수수료/정산금액 계산은 Policy에 위임
      * - 스케줄 계산은 Policy에 위임
+     * 
+     * @param feeRate 수수료율 (필수, application.yml에서 주입)
      */
     public static Settlement create(
             UUID sellerUuid,
@@ -95,10 +98,9 @@ public class Settlement extends BaseIdAndUUIDAndTime {
             UUID orderItemId,
             UUID depositId,
             Long totalAmount,
-            BigDecimal requestedFeeRate,
+            BigDecimal feeRate,
             LocalDateTime reservationDate
     ) {
-        BigDecimal feeRate = SettlementFeePolicy.resolve(requestedFeeRate);
         long feeAmount = SettlementFeePolicy.calculateFeeAmount(totalAmount, feeRate);
         long settlementAmount = totalAmount - feeAmount;
 
