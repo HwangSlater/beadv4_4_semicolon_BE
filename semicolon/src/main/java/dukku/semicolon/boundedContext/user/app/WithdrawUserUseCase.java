@@ -14,12 +14,10 @@ import java.util.UUID;
 @Transactional
 public class WithdrawUserUseCase {
 
-    private final UserRepository userRepository;
+    private final UserSupport userSupport;
 
     public void withdraw(UUID userUuid) {
-        User user = userRepository.findByUuidAndDeletedAtIsNull(userUuid)
-                .orElseThrow(UserNotFoundException::new);
-
+        User user = userSupport.getActiveUserByUuid(userUuid);
         user.withdraw();
     }
 }
