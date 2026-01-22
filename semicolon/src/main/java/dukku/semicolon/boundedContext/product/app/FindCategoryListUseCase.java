@@ -15,12 +15,7 @@ public class FindCategoryListUseCase {
 
     public List<CategoryResponse> execute() {
         return categoryRepository.findAll().stream()
-                .map(c -> CategoryResponse.builder()
-                        .id(c.getId())
-                        .name(c.getCategoryName())
-                        .depth(c.getDepth())
-                        .parentId(c.getParent() == null ? null : c.getParent().getId())
-                        .build())
+                .map(CategoryResponse::from)
                 .toList();
     }
 }

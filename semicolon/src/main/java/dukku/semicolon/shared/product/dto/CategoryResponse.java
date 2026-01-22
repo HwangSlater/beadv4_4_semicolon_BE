@@ -1,11 +1,28 @@
 package dukku.semicolon.shared.product.dto;
 
+import dukku.semicolon.boundedContext.product.entity.Category;
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 @Builder
-public record CategoryResponse(
-        Integer id,
-        String name,
-        int depth,
-        Integer parentId
-) {}
+public class CategoryResponse {
+
+    private Integer id;
+    private String name;
+    private Integer depth;
+    private Integer parentId;
+
+    public static CategoryResponse from(Category category) {
+        return CategoryResponse.builder()
+                .id(category.getId())
+                .name(category.getCategoryName())
+                .depth(category.getDepth())
+                .parentId(
+                        category.getParent() == null
+                                ? null
+                                : category.getParent().getId()
+                )
+                .build();
+    }
+}
