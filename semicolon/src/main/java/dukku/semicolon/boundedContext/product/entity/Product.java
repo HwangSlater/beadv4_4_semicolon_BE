@@ -173,4 +173,29 @@ public class Product extends BaseIdAndUUIDAndTime {
             }
         }
     }
+
+    // 판매 확정 (RESERVED -> SOLD_OUT)
+    public void confirmSale(UUID orderUuid) {
+        // 내 주문이 맞는지 검증 (다른 사람의 주문으로 예약된 상품을 건드리지 않도록)
+        if (this.saleStatus == SaleStatus.RESERVED &&
+                this.reservedOrderUuid != null &&
+                this.reservedOrderUuid.equals(orderUuid)) {
+
+            this.saleStatus = SaleStatus.SOLD_OUT;
+            // 판매 완료되어도 주문 추적을 위해 reservedOrderUuid는 남겨두거나,
+            // 별도 soldOrderUuid로 옮기는 정책을 쓸 수 있음. 여기선 유지.
+        }
+    }
+
+    // 예약 해제 (RESERVED -> ON_SALE)
+    public void releaseReservation(UUID orderUuid) {
+        // 내 주문이 맞는지 검증
+        if (this.saleStatus == SaleStatus.RESERVED &&
+                this.reservedOrderUuid != null &&
+                this.reservedOrderUuid.equals(orderUuid)) {
+
+            this.saleStatus = SaleStatus.ON_SALE;
+            this.reservedOrderUuid = null; // 예약 정보 삭제
+        }
+    }
 }

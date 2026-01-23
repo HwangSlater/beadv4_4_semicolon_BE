@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,7 +21,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, Cust
 
     Optional<Product> findByUuidAndDeletedAtIsNull(UUID productUuid);
 
-    boolean existsByUuidAndDeletedAtIsNull(UUID productUuid);
+    List<Product> findAllByUuidIn(List<UUID> uuids);
 
     // 목록: visibility=VISIBLE, deletedAt=null 기본
     Page<Product> findByVisibilityStatusAndDeletedAtIsNull(
@@ -34,9 +35,4 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, Cust
             VisibilityStatus visibilityStatus,
             Pageable pageable
     );
-
-    // 스케줄러용: Bulk Update (영속성 컨텍스트 무시하고 DB 바로 쏘기)
-    @Modifying(clearAutomatically = true)
-    @Query("UPDATE Product p SET p.viewCount = :viewCount, p.likeCount = :likeCount, p.commentCount = :commentCount WHERE p.id = :id")
-    void updateProductStats(@Param("id") Long id, @Param("viewCount") long viewCount, @Param("likeCount") long likeCount, @Param("commentCount") long commentCount);
 }

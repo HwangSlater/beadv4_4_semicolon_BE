@@ -2,10 +2,7 @@ package dukku.semicolon.boundedContext.product.in;
 
 import dukku.semicolon.boundedContext.product.app.facade.ProductFacade;
 import dukku.semicolon.shared.product.docs.ProductApiDocs;
-import dukku.semicolon.shared.product.dto.product.CategoryCreateResponse;
-import dukku.semicolon.shared.product.dto.product.ProductDetailResponse;
-import dukku.semicolon.shared.product.dto.product.ProductListItemResponse;
-import dukku.semicolon.shared.product.dto.product.ProductListResponse;
+import dukku.semicolon.shared.product.dto.product.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -52,5 +49,10 @@ public class ProductController {
             @PathVariable UUID productUuid
     ) {
         return productFacade.findProductDetail(productUuid);
+    }
+
+    @PostMapping("/internal/reserve")
+    public void reserveProducts(@RequestBody ProductReserveRequest request) {
+        productFacade.reserveProducts(request);
     }
 }

@@ -21,6 +21,7 @@ public class ProductFacade {
     private final CreateProductUseCase createProductUseCase;
     private final UpdateProductUseCase updateProductUseCase;
     private final DeleteProductUseCase deleteProductUseCase;
+    private final ReserveProductUseCase reserveProductUseCase;
 
     // TODO: return DTO
     public Product createProduct(ProductCreateRequest request) {
@@ -49,5 +50,9 @@ public class ProductFacade {
 
     public ProductDetailResponse findProductDetail(UUID productUuid) {
         return findProductDetailUseCase.execute(productUuid);
+    }
+
+    public void reserveProducts(ProductReserveRequest request) {
+        reserveProductUseCase.execute(request);
     }
 }
