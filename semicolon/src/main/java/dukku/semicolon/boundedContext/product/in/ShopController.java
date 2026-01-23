@@ -1,5 +1,6 @@
 package dukku.semicolon.boundedContext.product.in;
 
+import dukku.common.shared.product.type.SaleStatus;
 import dukku.semicolon.boundedContext.product.app.ShopFacade;
 import dukku.semicolon.shared.product.docs.ShopApiDocs;
 import dukku.semicolon.shared.product.dto.ShopProductListResponse;
@@ -56,9 +57,10 @@ public class ShopController {
     @ShopApiDocs.FindShopProducts
     public ShopProductListResponse findShopProducts(
             @PathVariable UUID shopUuid,
+            @RequestParam(required = false) SaleStatus saleStatus,
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "20") @Min(1) @Max(50) int size
     ) {
-        return shopFacade.findShopProducts(shopUuid, page, size);
+        return shopFacade.findShopProducts(shopUuid, saleStatus, page, size);
     }
 }

@@ -1,5 +1,6 @@
 package dukku.semicolon.boundedContext.product.app;
 
+import dukku.common.shared.product.type.SaleStatus;
 import dukku.semicolon.shared.product.dto.ShopProductListResponse;
 import dukku.semicolon.shared.product.dto.ShopResponse;
 import dukku.semicolon.shared.product.dto.UpdateShopRequest;
@@ -29,7 +30,7 @@ public class ShopFacade {
         return findShopUseCase.execute(shopUuid);
     }
 
-    public ShopProductListResponse findShopProducts(UUID shopUuid, int page, int size) {
-        return findShopProductsUseCase.execute(shopUuid, page, size);
+    public ShopProductListResponse findShopProducts(UUID shopUuid, SaleStatus saleStatus, int page, int size) {
+        return findShopProductsUseCase.execute(shopUuid, saleStatus, page, size);
     }
 }

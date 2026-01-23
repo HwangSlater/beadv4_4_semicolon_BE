@@ -1,5 +1,6 @@
 package dukku.semicolon.boundedContext.product.app;
 
+import dukku.common.shared.product.type.SaleStatus;
 import dukku.semicolon.boundedContext.product.entity.Product;
 import dukku.semicolon.boundedContext.product.entity.ProductSeller;
 import dukku.semicolon.boundedContext.product.out.ProductRepository;
@@ -23,7 +24,7 @@ public class FindShopProductsUseCase {
     private final ProductRepository productRepository;
 
     @Transactional(readOnly = true)
-    public ShopProductListResponse execute(UUID shopUuid, int page, int size) {
+    public ShopProductListResponse execute(UUID shopUuid, SaleStatus saleStatus, int page, int size) {
 
         Pageable pageable = PageRequest.of(
                 Math.max(page, 0),
@@ -35,7 +36,15 @@ public class FindShopProductsUseCase {
                 .orElseThrow(ProductSellerNotFoundException::new);
 
         // seller.userUuid == Product.sellerUuid
-        Page<Product> result = productRepository.findBySellerUuidAndDeletedAtIsNull(seller.getUserUuid(), pageable);
+        UUID sellerUserUuid = seller.getUserUuid();
+
+        Page<Product> result = (saleStatus == null)
+                ? productRepository.findBySellerUuidAndDeletedAtIsNull(sellerUserUuid, pageable)
+                : productRepository.findBySellerUuidAndSaleStatusAndDeletedAtIsNull(
+                sellerUserUuid,
+                saleStatus,
+                pageable
+        );
 
         List<ProductListItemResponse> items = result.getContent().stream()
                 .map(ProductMapper::toListItem)

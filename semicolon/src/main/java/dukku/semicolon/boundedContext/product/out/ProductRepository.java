@@ -1,5 +1,6 @@
 package dukku.semicolon.boundedContext.product.out;
 
+import dukku.common.shared.product.type.SaleStatus;
 import dukku.common.shared.product.type.VisibilityStatus;
 import dukku.semicolon.boundedContext.product.entity.Product;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,11 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @EntityGraph(attributePaths = "images")
     Page<Product> findBySellerUuidAndDeletedAtIsNull(UUID sellerUuid, Pageable pageable);
+
+    @EntityGraph(attributePaths = "images")
+    Page<Product> findBySellerUuidAndSaleStatusAndDeletedAtIsNull(
+            UUID sellerUuid, SaleStatus saleStatus, Pageable pageable
+    );
 
     // 목록: visibility=VISIBLE, deletedAt=null 기본
     Page<Product> findByVisibilityStatusAndDeletedAtIsNull(

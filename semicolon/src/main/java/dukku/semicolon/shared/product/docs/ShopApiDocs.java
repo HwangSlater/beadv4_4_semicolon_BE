@@ -2,6 +2,7 @@ package dukku.semicolon.shared.product.docs;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,8 +36,13 @@ public final class ShopApiDocs {
             summary = "내 상점 조회",
             description = "로그인한 사용자의 상점 정보를 조회합니다.",
             parameters = {
-                    @Parameter(name = "X-USER-UUID", description = "임시 사용자 UUID 헤더", required = true,
-                            example = "7fa85f64-5717-4562-b3fc-2c963f66afa6")
+                    @Parameter(
+                            name = "X-USER-UUID",
+                            in = ParameterIn.HEADER,
+                            description = "임시 사용자 UUID 헤더",
+                            required = true,
+                            example = "7fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    )
             },
             responses = {
                     @ApiResponse(
@@ -68,8 +74,13 @@ public final class ShopApiDocs {
             summary = "내 상점 소개 수정",
             description = "내 상점 소개글(intro)을 수정합니다.",
             parameters = {
-                    @Parameter(name = "X-USER-UUID", description = "임시 사용자 UUID 헤더", required = true,
-                            example = "7fa85f64-5717-4562-b3fc-2c963f66afa6")
+                    @Parameter(
+                            name = "X-USER-UUID",
+                            in = ParameterIn.HEADER,
+                            description = "임시 사용자 UUID 헤더",
+                            required = true,
+                            example = "7fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    )
             },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     required = true,
@@ -115,8 +126,13 @@ public final class ShopApiDocs {
             summary = "판매자 상점 조회(공개)",
             description = "판매자 상점 UUID로 상점 정보를 조회합니다.",
             parameters = {
-                    @Parameter(name = "shopUuid", description = "상점 UUID", required = true,
-                            example = "11111111-2222-3333-4444-555555555555")
+                    @Parameter(
+                            name = "shopUuid",
+                            in = ParameterIn.PATH,
+                            description = "상점 UUID",
+                            required = true,
+                            example = "11111111-2222-3333-4444-555555555555"
+                    )
             },
             responses = {
                     @ApiResponse(
@@ -161,12 +177,34 @@ public final class ShopApiDocs {
     @Retention(RUNTIME)
     @Operation(
             summary = "판매자 상점 상품 목록 조회(공개)",
-            description = "판매자 상점의 상품 목록을 페이징으로 조회합니다.",
+            description = "판매자 상점의 상품 목록을 페이징으로 조회합니다. (saleStatus로 필터 가능)",
             parameters = {
-                    @Parameter(name = "shopUuid", description = "상점 UUID", required = true,
-                            example = "11111111-2222-3333-4444-555555555555"),
-                    @Parameter(name = "page", description = "페이지(0부터 시작)", example = "0"),
-                    @Parameter(name = "size", description = "페이지 사이즈(최대 50)", example = "20")
+                    @Parameter(
+                            name = "shopUuid",
+                            in = ParameterIn.PATH,
+                            description = "상점 UUID",
+                            required = true,
+                            example = "11111111-2222-3333-4444-555555555555"
+                    ),
+                    @Parameter(
+                            name = "saleStatus",
+                            in = ParameterIn.QUERY,
+                            description = "판매 상태 필터(선택): ON_SALE | RESERVED | SOLD_OUT",
+                            required = false,
+                            example = "ON_SALE"
+                    ),
+                    @Parameter(
+                            name = "page",
+                            in = ParameterIn.QUERY,
+                            description = "페이지(0부터 시작)",
+                            example = "0"
+                    ),
+                    @Parameter(
+                            name = "size",
+                            in = ParameterIn.QUERY,
+                            description = "페이지 사이즈(최대 50)",
+                            example = "20"
+                    )
             },
             responses = {
                     @ApiResponse(
@@ -174,26 +212,60 @@ public final class ShopApiDocs {
                             description = "상점 상품 목록 조회 성공",
                             content = @Content(
                                     mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(
+                                                    name = "Shop Products (All)",
+                                                    value = """
+                                                            {
+                                                              "items": [
+                                                                {
+                                                                  "productUuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                                                                  "title": "빈티지 원목 독서대",
+                                                                  "price": 45000,
+                                                                  "thumbnailUrl": "https://cdn.image.com/p/1024_thumb.png",
+                                                                  "likeCount": 150
+                                                                }
+                                                              ],
+                                                              "page": 0,
+                                                              "size": 20,
+                                                              "totalCount": 42,
+                                                              "hasNext": true
+                                                            }
+                                                            """
+                                            ),
+                                            @ExampleObject(
+                                                    name = "Shop Products (Filtered by saleStatus)",
+                                                    value = """
+                                                            {
+                                                              "items": [
+                                                                {
+                                                                  "productUuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                                                                  "title": "빈티지 원목 독서대",
+                                                                  "price": 45000,
+                                                                  "thumbnailUrl": "https://cdn.image.com/p/1024_thumb.png",
+                                                                  "likeCount": 150
+                                                                }
+                                                              ],
+                                                              "page": 0,
+                                                              "size": 20,
+                                                              "totalCount": 12,
+                                                              "hasNext": true
+                                                            }
+                                                            """
+                                            )
+                                    }
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "잘못된 요청(saleStatus 값이 유효하지 않음 등)",
+                            content = @Content(
+                                    mediaType = "application/json",
                                     examples = @ExampleObject(
-                                            name = "Shop Products",
                                             value = """
                                                     {
-                                                      "totalCount": 42,
-                                                      "items": [
-                                                        {
-                                                          "productUuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                                                          "thumbnailUrl": "https://cdn.image.com/p/1024_thumb.png",
-                                                          "title": "빈티지 원목 독서대",
-                                                          "price": 45000,
-                                                          "createdAt": "2026-01-14T15:00:00Z",
-                                                          "likeCount": 150,
-                                                          "commentCount": 12,
-                                                          "status": "FOR_SALE"
-                                                        }
-                                                      ],
-                                                      "page": 0,
-                                                      "size": 20,
-                                                      "hasNext": true
+                                                      "message": "잘못된 요청",
+                                                      "details": "saleStatus 값이 유효하지 않습니다."
                                                     }
                                                     """
                                     )
