@@ -2,6 +2,7 @@ package dukku.semicolon.boundedContext.settlement.entity;
 
 import dukku.common.global.jpa.entity.BaseIdAndUUIDAndTime;
 import dukku.semicolon.boundedContext.settlement.entity.type.SettlementStatus;
+import dukku.semicolon.shared.settlement.exception.SettlementValidationException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -183,23 +184,17 @@ public class Settlement extends BaseIdAndUUIDAndTime {
      */
     private void validateAmount() {
         if (this.totalAmount == null || this.totalAmount <= 0) {
-            throw new IllegalArgumentException(
-                    String.format("총액이 유효하지 않습니다. totalAmount=%d", this.totalAmount)
-            );
+            throw SettlementValidationException.invalidAmount(this.totalAmount);
         }
         if (this.settlementAmount == null || this.settlementAmount <= 0) {
-            throw new IllegalArgumentException(
-                    String.format("정산 금액이 유효하지 않습니다. settlementAmount=%d", this.settlementAmount)
-            );
+            throw SettlementValidationException.invalidAmount(this.settlementAmount);
         }
         if (this.feeAmount == null || this.feeAmount < 0) {
-            throw new IllegalArgumentException(
-                    String.format("수수료 금액이 유효하지 않습니다. feeAmount=%d", this.feeAmount)
-            );
+            throw SettlementValidationException.invalidAmount(this.feeAmount);
         }
         // 총액 = 정산금액 + 수수료
         if (!this.totalAmount.equals(this.settlementAmount + this.feeAmount)) {
-            throw new IllegalArgumentException(
+            throw new SettlementValidationException(
                     String.format("금액 계산이 올바르지 않습니다. totalAmount=%d, settlementAmount=%d, feeAmount=%d",
                             this.totalAmount, this.settlementAmount, this.feeAmount)
             );
@@ -211,11 +206,11 @@ public class Settlement extends BaseIdAndUUIDAndTime {
      */
     private void validateReservationDate() {
         if (this.settlementReservationDate == null) {
-            throw new IllegalArgumentException("정산 예약일이 설정되지 않았습니다.");
+            throw SettlementValidationException.missingRequiredField("settlementReservationDate");
         }
         // 정산 예약일이 과거인지 확인 (현재 시간 기준으로 처리 가능한지)
         if (this.settlementReservationDate.isAfter(LocalDateTime.now())) {
-            throw new IllegalStateException(
+            throw new SettlementValidationException(
                     String.format("정산 예약일이 아직 도래하지 않았습니다. reservationDate=%s, now=%s",
                             this.settlementReservationDate, LocalDateTime.now())
             );
@@ -227,13 +222,13 @@ public class Settlement extends BaseIdAndUUIDAndTime {
      */
     private void validateRequiredFields() {
         if (this.sellerUuid == null) {
-            throw new IllegalArgumentException("판매자 UUID가 누락되었습니다.");
+            throw SettlementValidationException.missingRequiredField("sellerUuid");
         }
         if (this.depositId == null) {
-            throw new IllegalArgumentException("예치금 UUID가 누락되었습니다.");
+            throw SettlementValidationException.missingRequiredField("depositId");
         }
         if (this.orderId == null) {
-            throw new IllegalArgumentException("주문 UUID가 누락되었습니다.");
+            throw SettlementValidationException.missingRequiredField("orderId");
         }
     }
 

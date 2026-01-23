@@ -32,7 +32,7 @@ public class RequestDepositChargeUseCase {
         try {
             // 1. Settlement 상태 전이 검증 (내부에서 validateForProcessing 호출)
             // - IllegalStateException: 상태 전이 불가 → SettlementValidationException 변환
-            // - IllegalArgumentException: 데이터 유효성 오류 → SettlementValidationException 변환
+            // - SettlementValidationException: 데이터 유효성 오류
             settlement.startProcessing();
             settlementSupport.save(settlement);
 
@@ -57,11 +57,11 @@ public class RequestDepositChargeUseCase {
             throw SettlementValidationException.invalidStatusTransition(
                     settlement.getSettlementStatus().name(), "PROCESSING");
 
-        } catch (IllegalArgumentException e) {
+        } catch (SettlementValidationException e) {
             // 데이터 유효성 검증 실패 (금액 오류, 필수 필드 누락 등)
             log.error("[정산 처리 실패] 데이터 유효성 오류. settlementUuid={}, error={}",
                     settlement.getUuid(), e.getMessage());
-            throw new SettlementValidationException(e.getMessage());
+            throw e;
 
         } catch (Exception e) {
             // 예상치 못한 오류 (DB 오류, 이벤트 발행 실패 등)
