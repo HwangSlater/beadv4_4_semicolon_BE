@@ -179,6 +179,21 @@ public final class ShopApiDocs {
                                                     """
                                     )
                             )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "상점을 찾을 수 없음",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(
+                                            value = """
+                                                  {
+                                                    "message": "리소스를 찾을 수 없습니다.",
+                                                    "details": "존재하지 않는 상점입니다."
+                                                  }
+                                                  """
+                                    )
+                            )
                     )
             }
     )

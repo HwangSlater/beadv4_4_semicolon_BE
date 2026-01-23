@@ -18,14 +18,14 @@ import java.util.UUID;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/shops")
 @ShopApiDocs.ShopTag
 public class ShopController {
 
     private final ShopFacade shopFacade;
 
     // 내 상점 조회
-    @GetMapping("/me/shop")
+    @GetMapping("/me")
     @ShopApiDocs.FindMyShop
     public ShopResponse findMyShop(
             @RequestHeader("X-USER-UUID") UUID userUuid
@@ -34,7 +34,7 @@ public class ShopController {
     }
 
     // 내 상점 소개 수정
-    @PatchMapping("/me/shop")
+    @PatchMapping("/me")
     @ShopApiDocs.UpdateMyShop
     public ShopResponse updateMyShop(
             @RequestHeader("X-USER-UUID") UUID userUuid,
@@ -44,7 +44,7 @@ public class ShopController {
     }
 
     // 내 상점 상품 목록(내 판매 상품)
-    @GetMapping("/me/shop/products")
+    @GetMapping("/me/products")
     @ShopApiDocs.FindMyShopProducts
     public ShopProductListResponse findMyShopProducts(
             @RequestHeader("X-USER-UUID") UUID userUuid,
@@ -56,7 +56,7 @@ public class ShopController {
     }
 
     // 판매자 상점 조회(공개)
-    @GetMapping("/shops/{shopUuid}")
+    @GetMapping("/{shopUuid}")
     @ShopApiDocs.FindShop
     public ShopResponse findShop(
             @PathVariable UUID shopUuid
@@ -65,7 +65,7 @@ public class ShopController {
     }
 
     // 판매자 상점 상품 목록(공개)
-    @GetMapping("/shops/{shopUuid}/products")
+    @GetMapping("/{shopUuid}/products")
     @ShopApiDocs.FindShopProducts
     public ShopProductListResponse findShopProducts(
             @PathVariable UUID shopUuid,
