@@ -139,6 +139,7 @@ public class Settlement extends BaseIdAndUUIDAndTime {
     /* ========= 상태 변경 ========= */
 
     public void startProcessing() {
+        validateForProcessing();
         changeStatus(SettlementStatus.PROCESSING);
     }
 
@@ -163,6 +164,77 @@ public class Settlement extends BaseIdAndUUIDAndTime {
             );
         }
         this.settlementStatus = newStatus;
+    }
+
+    /* ========= 검증 로직 ========= */
+
+    /**
+     * 예치금 충전 처리 전 검증
+     * - PROCESSING 상태로 전이하기 전에 호출됨
+     */
+    private void validateForProcessing() {
+        validateAmount();
+        validateReservationDate();
+        validateRequiredFields();
+    }
+
+    /**
+     * 금액 유효성 검증
+     */
+    private void validateAmount() {
+        if (this.totalAmount == null || this.totalAmount <= 0) {
+            throw new IllegalArgumentException(
+                    String.format("총액이 유효하지 않습니다. totalAmount=%d", this.totalAmount)
+            );
+        }
+        if (this.settlementAmount == null || this.settlementAmount <= 0) {
+            throw new IllegalArgumentException(
+                    String.format("정산 금액이 유효하지 않습니다. settlementAmount=%d", this.settlementAmount)
+            );
+        }
+        if (this.feeAmount == null || this.feeAmount < 0) {
+            throw new IllegalArgumentException(
+                    String.format("수수료 금액이 유효하지 않습니다. feeAmount=%d", this.feeAmount)
+            );
+        }
+        // 총액 = 정산금액 + 수수료
+        if (!this.totalAmount.equals(this.settlementAmount + this.feeAmount)) {
+            throw new IllegalArgumentException(
+                    String.format("금액 계산이 올바르지 않습니다. totalAmount=%d, settlementAmount=%d, feeAmount=%d",
+                            this.totalAmount, this.settlementAmount, this.feeAmount)
+            );
+        }
+    }
+
+    /**
+     * 정산 예약일 검증
+     */
+    private void validateReservationDate() {
+        if (this.settlementReservationDate == null) {
+            throw new IllegalArgumentException("정산 예약일이 설정되지 않았습니다.");
+        }
+        // 정산 예약일이 과거인지 확인 (현재 시간 기준으로 처리 가능한지)
+        if (this.settlementReservationDate.isAfter(LocalDateTime.now())) {
+            throw new IllegalStateException(
+                    String.format("정산 예약일이 아직 도래하지 않았습니다. reservationDate=%s, now=%s",
+                            this.settlementReservationDate, LocalDateTime.now())
+            );
+        }
+    }
+
+    /**
+     * 필수 필드 검증
+     */
+    private void validateRequiredFields() {
+        if (this.sellerUuid == null) {
+            throw new IllegalArgumentException("판매자 UUID가 누락되었습니다.");
+        }
+        if (this.depositId == null) {
+            throw new IllegalArgumentException("예치금 UUID가 누락되었습니다.");
+        }
+        if (this.orderId == null) {
+            throw new IllegalArgumentException("주문 UUID가 누락되었습니다.");
+        }
     }
 
     /* ========= 상태 확인 ========= */
