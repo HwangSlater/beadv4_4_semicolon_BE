@@ -1,6 +1,7 @@
 package dukku.semicolon.boundedContext.product.in;
 
 import dukku.semicolon.boundedContext.product.app.ShopFacade;
+import dukku.semicolon.shared.product.docs.ShopApiDocs;
 import dukku.semicolon.shared.product.dto.ShopProductListResponse;
 import dukku.semicolon.shared.product.dto.ShopResponse;
 import dukku.semicolon.shared.product.dto.UpdateShopRequest;
@@ -17,12 +18,14 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
+@ShopApiDocs.ShopTag
 public class ShopController {
 
     private final ShopFacade shopFacade;
 
     // 내 상점 조회
     @GetMapping("/me/shop")
+    @ShopApiDocs.FindMyShop
     public ShopResponse findMyShop(
             @RequestHeader("X-USER-UUID") UUID userUuid
     ) {
@@ -31,6 +34,7 @@ public class ShopController {
 
     // 내 상점 소개 수정
     @PatchMapping("/me/shop")
+    @ShopApiDocs.UpdateMyShop
     public ShopResponse updateMyShop(
             @RequestHeader("X-USER-UUID") UUID userUuid,
             @RequestBody @Valid UpdateShopRequest request
@@ -40,6 +44,7 @@ public class ShopController {
 
     // 판매자 상점 조회(공개)
     @GetMapping("/shops/{shopUuid}")
+    @ShopApiDocs.FindShop
     public ShopResponse findShop(
             @PathVariable UUID shopUuid
     ) {
@@ -48,6 +53,7 @@ public class ShopController {
 
     // 판매자 상점 상품 목록(공개)
     @GetMapping("/shops/{shopUuid}/products")
+    @ShopApiDocs.FindShopProducts
     public ShopProductListResponse findShopProducts(
             @PathVariable UUID shopUuid,
             @RequestParam(defaultValue = "0") @Min(0) int page,
