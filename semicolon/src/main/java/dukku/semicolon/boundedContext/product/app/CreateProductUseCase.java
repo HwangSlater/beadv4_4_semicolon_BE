@@ -5,9 +5,11 @@ import dukku.semicolon.boundedContext.product.entity.Product;
 import dukku.semicolon.boundedContext.product.out.CategoryRepository;
 import dukku.semicolon.boundedContext.product.out.ProductRepository;
 import dukku.semicolon.shared.product.dto.ProductCreateRequest;
+import dukku.semicolon.shared.product.dto.ProductDetailResponse;
 import dukku.semicolon.shared.product.exception.ProductCategoryNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,19 +18,23 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CreateProductUseCase {
 
-    private final ProductSupport productSupport;
-    private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
+    private final ProductSupport productSupport;
 
-    public Product execute(UUID sellerUuid, ProductCreateRequest request) {
+    @Transactional
+    public ProductDetailResponse execute(UUID userUuid, ProductCreateRequest request) {
 
-        if (!productSupport.existsByCategoryId(request.getCategoryId())) {
+        Integer categoryId = request.getCategoryId();
+
+        if (!categoryRepository.existsById(categoryId)) {
             throw new ProductCategoryNotFoundException();
         }
 
-        Category category = categoryRepository.getReferenceById(request.getCategoryId());
+        Category category = categoryRepository.getReferenceById(categoryId);
+
         Product product = Product.create(
-                sellerUuid,
+                userUuid,
                 category,
                 request.getTitle(),
                 request.getDescription(),
@@ -37,12 +43,14 @@ public class CreateProductUseCase {
                 request.getConditionStatus()
         );
 
+        // TODO : 이미지 URL 저장 (S3 등 외부 스토리지 연동 시 수정 필요)
         List<String> imageUrls = request.getImageUrls();
         if (imageUrls != null && !imageUrls.isEmpty()) {
-            productSupport.validateImageCount(product.getImages().size(), imageUrls.size());
+            productSupport.validateMaxImageCount(imageUrls.size()); // 신규니까 기존 0
             imageUrls.forEach(product::addImage);
         }
 
-        return productRepository.save(product);
+        Product saved = productRepository.save(product);
+        return ProductMapper.toDetail(saved);
     }
 }

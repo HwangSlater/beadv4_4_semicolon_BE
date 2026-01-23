@@ -4,6 +4,7 @@ import dukku.common.global.jpa.entity.BaseIdAndUUIDAndTime;
 import dukku.common.shared.product.type.ConditionStatus;
 import dukku.common.shared.product.type.SaleStatus;
 import dukku.common.shared.product.type.VisibilityStatus;
+import dukku.semicolon.shared.product.dto.ProductUpdateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -135,5 +136,39 @@ public class Product extends BaseIdAndUUIDAndTime {
                 .orElse(0) + 1;
 
         images.add(ProductImage.create(this, imageUrl, nextSortOrder));
+    }
+
+    public void softDelete() {
+        this.deletedAt = java.time.LocalDateTime.now();
+    }
+
+    // 수정용 change 메서드
+    public void changeCategory(Category category) { this.category = category; }
+    public void changeTitle(String title) { this.title = title; }
+    public void changeDescription(String description) { this.description = description; }
+    public void changePrice(Long price) { this.price = price; }
+    public void changeShippingFee(Long shippingFee) { this.shippingFee = (shippingFee == null ? 0L : shippingFee); }
+    public void changeConditionStatus(ConditionStatus status) { this.conditionStatus = status; }
+
+    public void replaceImages(List<String> imageUrls) {
+        this.images.clear();
+        int sort = 1;
+        for (String url : imageUrls) {
+            this.images.add(ProductImage.create(this, url, sort));
+            sort++;
+        }
+    }
+
+    public void applyUpdate(Category category, ProductUpdateRequest req) {
+        if (category != null) changeCategory(category);
+        if (req.getTitle() != null) changeTitle(req.getTitle());
+        if (req.getDescription() != null) changeDescription(req.getDescription());
+        if (req.getPrice() != null) changePrice(req.getPrice());
+        if (req.getShippingFee() != null) changeShippingFee(req.getShippingFee());
+        if (req.getConditionStatus() != null) changeConditionStatus(req.getConditionStatus());
+
+        if (req.getImageUrls() != null) {
+            replaceImages(req.getImageUrls()); // null 아님 => 전체교체
+        }
     }
 }
