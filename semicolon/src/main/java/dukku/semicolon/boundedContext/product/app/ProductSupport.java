@@ -1,6 +1,5 @@
 package dukku.semicolon.boundedContext.product.app;
 
-import dukku.semicolon.boundedContext.product.out.CategoryRepository;
 import dukku.semicolon.shared.product.exception.ProductImageLimitExceededException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -9,15 +8,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ProductSupport {
 
-    private final CategoryRepository categoryRepository;
+    private static final int MAX_IMAGE_COUNT = 10;
 
-    public boolean existsByCategoryId(Integer categoryId) {
-        return categoryRepository.existsById(categoryId);
-    }
-
-    public void validateImageCount(int currentCount, int addCount) {
-        if (currentCount + addCount > 10) {
-            throw new ProductImageLimitExceededException();
-        }
+    public void validateMaxImageCount(int count) {
+        if (count > MAX_IMAGE_COUNT) throw new ProductImageLimitExceededException();
     }
 }

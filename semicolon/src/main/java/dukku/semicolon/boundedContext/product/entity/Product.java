@@ -136,4 +136,25 @@ public class Product extends BaseIdAndUUIDAndTime {
 
         images.add(ProductImage.create(this, imageUrl, nextSortOrder));
     }
+
+    public void softDelete() {
+        this.deletedAt = java.time.LocalDateTime.now();
+    }
+
+    // 수정용 change 메서드
+    public void changeCategory(Category category) { this.category = category; }
+    public void changeTitle(String title) { this.title = title; }
+    public void changeDescription(String description) { this.description = description; }
+    public void changePrice(Long price) { this.price = price; }
+    public void changeShippingFee(Long shippingFee) { this.shippingFee = (shippingFee == null ? 0L : shippingFee); }
+    public void changeConditionStatus(ConditionStatus status) { this.conditionStatus = status; }
+
+    public void replaceImages(List<String> imageUrls) {
+        this.images.clear();
+        int sort = 1;
+        for (String url : imageUrls) {
+            this.images.add(ProductImage.create(this, url, sort));
+            sort++;
+        }
+    }
 }
