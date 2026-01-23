@@ -2,7 +2,7 @@ package dukku.semicolon.boundedContext.settlement.in;
 
 import dukku.semicolon.boundedContext.settlement.app.SettlementFacade;
 import dukku.semicolon.shared.settlement.docs.SettlementApiDocs;
-import dukku.semicolon.shared.settlement.dto.SettlementResponse;
+import dukku.semicolon.shared.settlement.dto.SettlementDetailResponse;
 import dukku.semicolon.shared.settlement.dto.SettlementSearchRequest;
 import dukku.semicolon.shared.settlement.dto.SettlementStatisticsRequest;
 import dukku.semicolon.shared.settlement.dto.SettlementStatisticsResponse;
@@ -31,7 +31,7 @@ public class SettlementController {
      */
     @GetMapping
     @SettlementApiDocs.GetSettlements
-    public Page<SettlementResponse> getSettlements(
+    public Page<SettlementDetailResponse> getSettlements(
             @Valid @ModelAttribute SettlementSearchRequest request,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
@@ -44,7 +44,7 @@ public class SettlementController {
      */
     @GetMapping("/{settlementUuid}")
     @SettlementApiDocs.GetSettlement
-    public SettlementResponse getSettlement(@PathVariable UUID settlementUuid) {
+    public SettlementDetailResponse getSettlement(@PathVariable UUID settlementUuid) {
         return settlementFacade.getSettlement(settlementUuid);
     }
 

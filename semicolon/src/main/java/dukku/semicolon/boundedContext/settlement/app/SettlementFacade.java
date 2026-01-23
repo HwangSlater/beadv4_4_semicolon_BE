@@ -4,7 +4,7 @@ import dukku.common.shared.deposit.event.DepositChargeFailedEvent;
 import dukku.common.shared.deposit.event.DepositChargeSucceededEvent;
 import dukku.common.shared.order.event.OrderItemConfirmedEvent;
 import dukku.semicolon.boundedContext.settlement.entity.Settlement;
-import dukku.semicolon.shared.settlement.dto.SettlementResponse;
+import dukku.semicolon.shared.settlement.dto.SettlementDetailResponse;
 import dukku.semicolon.shared.settlement.dto.SettlementSearchCondition;
 import dukku.semicolon.shared.settlement.dto.SettlementStatisticsCondition;
 import dukku.semicolon.shared.settlement.dto.SettlementStatisticsResponse;
@@ -30,15 +30,15 @@ public class SettlementFacade {
 
 
     @Transactional(readOnly = true)
-    public SettlementResponse getSettlement(UUID settlementUuid) {
+    public SettlementDetailResponse getSettlement(UUID settlementUuid) {
         Settlement settlement = getSettlementUseCase.execute(settlementUuid);
-        return toResponse(settlement);
+        return SettlementDetailResponse.from(settlement);
     }
 
     @Transactional(readOnly = true)
-    public Page<SettlementResponse> getSettlements(SettlementSearchCondition condition, Pageable pageable) {
+    public Page<SettlementDetailResponse> getSettlements(SettlementSearchCondition condition, Pageable pageable) {
         Page<Settlement> settlements = getSettlementListUseCase.execute(condition, pageable);
-        return settlements.map(this::toResponse);
+        return settlements.map(SettlementDetailResponse::from);
     }
 
     @Transactional(readOnly = true)
@@ -64,18 +64,5 @@ public class SettlementFacade {
         Settlement settlement = settlementSupport.findByUuid(event.settlementUuid());
         settlement.fail();
         settlementSupport.save(settlement);
-    }
-
-    /**
-     * TODO: 외부 서비스 호출로 sellerNickname, productName, bankName, accountNumber 조회
-     */
-    private SettlementResponse toResponse(Settlement settlement) {
-        return SettlementResponse.of(
-                settlement,
-                null,  // sellerNickname - 추후 외부 서비스 연동
-                null,  // productName - 추후 외부 서비스 연동
-                null,  // bankName - 추후 외부 서비스 연동
-                null   // accountNumber - 추후 외부 서비스 연동
-        );
     }
 }

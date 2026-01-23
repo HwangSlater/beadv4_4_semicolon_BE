@@ -1,6 +1,6 @@
 package dukku.semicolon.shared.settlement.out;
 
-import dukku.semicolon.shared.settlement.dto.SettlementResponse;
+import dukku.semicolon.shared.settlement.dto.SettlementDetailResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -19,17 +19,17 @@ public class SettlementApiClient {
                 .build();
     }
 
-    public SettlementResponse getSettlement(UUID settlementUuid) {
+    public SettlementDetailResponse getSettlement(UUID settlementUuid) {
         return restClient.get()
                 .uri("/{settlementUuid}", settlementUuid)
                 .retrieve()
-                .body(SettlementResponse.class);
+                .body(SettlementDetailResponse.class);
     }
 
-    public SettlementResponse[] getSettlementsBySeller(UUID sellerUuid) {
+    public SettlementDetailResponse[] getSettlementsBySeller(UUID sellerUuid) {
         return restClient.get()
                 .uri("?sellerUuid={sellerUuid}", sellerUuid)
                 .retrieve()
-                .body(SettlementResponse[].class);
+                .body(SettlementDetailResponse[].class);
     }
 }
