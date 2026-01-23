@@ -1,7 +1,10 @@
 package dukku.semicolon.boundedContext.settlement.app;
 
+import dukku.common.shared.deposit.event.DepositChargeFailedEvent;
+import dukku.common.shared.deposit.event.DepositChargeSucceededEvent;
+import dukku.common.shared.order.event.OrderItemConfirmedEvent;
 import dukku.semicolon.boundedContext.settlement.entity.Settlement;
-import dukku.semicolon.shared.settlement.dto.SettlementResponse;
+import dukku.semicolon.shared.settlement.dto.SettlementDetailResponse;
 import dukku.semicolon.shared.settlement.dto.SettlementSearchCondition;
 import dukku.semicolon.shared.settlement.dto.SettlementStatisticsCondition;
 import dukku.semicolon.shared.settlement.dto.SettlementStatisticsResponse;
@@ -11,22 +14,30 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class SettlementFacade {
 
+    private final GetSettlementUseCase getSettlementUseCase;
     private final GetSettlementListUseCase getSettlementListUseCase;
     private final GetSettlementStatisticsUseCase getSettlementStatisticsUseCase;
     private final CreateSettlementUseCase createSettlementUseCase;
     private final SettlementSupport settlementSupport;
     private final RequestDepositChargeUseCase requestDepositChargeUseCase;
 
+    @Transactional(readOnly = true)
+    public SettlementDetailResponse getSettlement(UUID settlementUuid) {
+        Settlement settlement = getSettlementUseCase.execute(settlementUuid);
+        return SettlementDetailResponse.from(settlement);
+    }
 
     @Transactional(readOnly = true)
-    public Page<SettlementResponse> getSettlements(SettlementSearchCondition condition, Pageable pageable) {
+    public Page<SettlementDetailResponse> getSettlements(SettlementSearchCondition condition, Pageable pageable) {
         Page<Settlement> settlements = getSettlementListUseCase.execute(condition, pageable);
-        return settlements.map(this::toResponse);
+        return settlements.map(SettlementDetailResponse::from);
     }
 
     @Transactional(readOnly = true)
@@ -34,38 +45,23 @@ public class SettlementFacade {
         return getSettlementStatisticsUseCase.execute(condition);
     }
 
-//    public Settlement requestDepositCharge(Settlement settlement) {
-//        // TODO: 예치금 충전 요청
-//        return requestDepositChargeUseCase.execute(settlement);
-//    }
-//
-//    public void createSettlement(OrderItemConfirmedEvent event) {
-//        createSettlementUseCase.execute(event);
-//    }
-//
-//
-//    public void completeSettlement(DepositChargeSuccedEvent event) {
-//        Settlement settlement = settlementSupport.findByUuid(event.settlementUuid());
-//        settlement.complete();
-//        settlementSupport.save(settlement);
-//    }
-//
-//    public void failSettlement(DepositChargeFailedEvent event) {
-//        Settlement settlement = settlementSupport.findByUuid(event.settlementUuid());
-//        settlement.fail();
-//        settlementSupport.save(settlement);
-//    }
+    public void createSettlement(OrderItemConfirmedEvent event) {
+        createSettlementUseCase.execute(event);
+    }
 
-    /**
-     * TODO: 외부 서비스 호출로 sellerNickname, productName, bankName, accountNumber 조회
-     */
-    private SettlementResponse toResponse(Settlement settlement) {
-        return SettlementResponse.of(
-                settlement,
-                null,  // sellerNickname - 추후 외부 서비스 연동
-                null,  // productName - 추후 외부 서비스 연동
-                null,  // bankName - 추후 외부 서비스 연동
-                null   // accountNumber - 추후 외부 서비스 연동
-        );
+    public Settlement requestDepositCharge(Settlement settlement) {
+        return requestDepositChargeUseCase.execute(settlement);
+    }
+
+    public void completeSettlement(DepositChargeSucceededEvent event) {
+        Settlement settlement = settlementSupport.findByUuid(event.settlementUuid());
+        settlement.complete();
+        settlementSupport.save(settlement);
+    }
+
+    public void failSettlement(DepositChargeFailedEvent event) {
+        Settlement settlement = settlementSupport.findByUuid(event.settlementUuid());
+        settlement.fail();
+        settlementSupport.save(settlement);
     }
 }

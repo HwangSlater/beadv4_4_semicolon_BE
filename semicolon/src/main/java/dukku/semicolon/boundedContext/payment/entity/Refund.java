@@ -59,6 +59,7 @@ public class Refund extends BaseIdAndUUIDAndTime {
     private List<RefundItem> items = new ArrayList<>();
 
     // === 정적 팩토리 메서드 ===
+
     public static Refund create(Payment payment, Long amount, Long depositAmount) {
         return Refund.builder()
                 .payment(payment)
@@ -69,6 +70,7 @@ public class Refund extends BaseIdAndUUIDAndTime {
     }
 
     // === 도메인 로직 ===
+
     public void complete() {
         this.refundStatus = RefundStatus.COMPLETED;
         this.approvedAt = LocalDateTime.now();
@@ -79,6 +81,7 @@ public class Refund extends BaseIdAndUUIDAndTime {
     }
 
     // === DTO 변환 ===
+
     public PaymentRefundResponse toPaymentRefundResponse(Long pgRefundAmount, String tossOrderId) {
         return PaymentRefundResponse.builder()
                 .success(true)
@@ -97,7 +100,8 @@ public class Refund extends BaseIdAndUUIDAndTime {
                         .pg(PaymentRefundResponse.PgInfo.builder()
                                 .provider("TOSS_PAYMENTS")
                                 .tossOrderId(tossOrderId)
-                                .cancelTransactionKey("CANCEL_" + this.getUuid().toString().substring(0, 8))
+                                .cancelTransactionKey("CANCEL_" + this.getUuid()
+                                        .toString().substring(0, 8))
                                 .build())
                         .createdAt(this.getCreatedAt())
                         .completedAt(this.approvedAt)
