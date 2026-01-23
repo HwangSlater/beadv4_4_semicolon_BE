@@ -4,6 +4,7 @@ import dukku.common.global.jpa.entity.BaseIdAndUUIDAndTime;
 import dukku.common.shared.product.type.ConditionStatus;
 import dukku.common.shared.product.type.SaleStatus;
 import dukku.common.shared.product.type.VisibilityStatus;
+import dukku.semicolon.shared.product.dto.ProductUpdateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -155,6 +156,19 @@ public class Product extends BaseIdAndUUIDAndTime {
         for (String url : imageUrls) {
             this.images.add(ProductImage.create(this, url, sort));
             sort++;
+        }
+    }
+
+    public void applyUpdate(Category category, ProductUpdateRequest req) {
+        if (category != null) changeCategory(category);
+        if (req.getTitle() != null) changeTitle(req.getTitle());
+        if (req.getDescription() != null) changeDescription(req.getDescription());
+        if (req.getPrice() != null) changePrice(req.getPrice());
+        if (req.getShippingFee() != null) changeShippingFee(req.getShippingFee());
+        if (req.getConditionStatus() != null) changeConditionStatus(req.getConditionStatus());
+
+        if (req.getImageUrls() != null) {
+            replaceImages(req.getImageUrls()); // null 아님 => 전체교체
         }
     }
 }
