@@ -1,9 +1,10 @@
 package dukku.semicolon.boundedContext.product.in;
 
-import dukku.semicolon.boundedContext.product.app.ProductLikeFacade;
-import dukku.semicolon.shared.product.dto.LikeProductResponse;
-import dukku.semicolon.shared.product.dto.MyLikedProductListResponse;
+import dukku.semicolon.boundedContext.product.app.facade.ProductLikeFacade;
+import dukku.semicolon.shared.product.dto.product.LikeProductResponse;
+import dukku.semicolon.shared.product.dto.product.MyLikedProductListResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,11 +20,10 @@ public class ProductLikeController {
     private final ProductLikeFacade productLikeFacade;
 
     @PostMapping("/products/{productUuid}/likes")
-    public LikeProductResponse like(
-            @PathVariable UUID productUuid,
-            @RequestHeader("X-USER-UUID") UUID userUuid // 프로젝트 인증 방식에 맞게 바꾸기
-    ) {
-        return productLikeFacade.like(userUuid, productUuid);
+    public ResponseEntity<Void> like(@PathVariable UUID productUuid) {
+        productLikeFacade.like(productUuid);
+
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/products/{productUuid}/likes")
