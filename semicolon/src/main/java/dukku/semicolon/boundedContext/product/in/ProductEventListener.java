@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -72,7 +73,7 @@ public class ProductEventListener {
      */
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handleOrderConfirmed(OrderProductSaleConfirmedEvent event) {
         log.info("Handle Order Confirmed: orderUuid={}", event.orderUuid());
 
@@ -93,7 +94,7 @@ public class ProductEventListener {
      */
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handleOrderReleased(OrderProductSaleReleasedEvent event) {
         log.info("Handle Order Released: orderUuid={}", event.orderUuid());
 
