@@ -63,7 +63,7 @@ jobs:
               -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
               -e SPRING_DATA_REDIS_HOST=${{ secrets.REDIS_HOST }} \
               -e SPRING_DATA_REDIS_PORT=6379 \
-              -e ELASTICSEARCH_URIS=${{ secrets.ELASTICSEARCH_URL }} \
+              -e SPRING_ELASTICSEARCH_URIS=${{ secrets.ELASTICSEARCH_URL }} \
               -e JWT_ACCESS_SECRET=${{ secrets.JWT_ACCESS_SECRET }} \
               -e JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }} \
               -e CRYPTO_KEY=${{ secrets.CRYPTO_KEY }} \

@@ -37,7 +37,7 @@ spring:
       enabled: false  # 애플리케이션 시작 시 자동 실행 방지
 
   elasticsearch:
-    Uris: http://elasticsearch:9200  # ES 서버 주소
+    Uris: http://team05-elasticsearch:9200  # ES 서버 주소
     socket-timeout: 30s
     connection-timeout: 5s
 
