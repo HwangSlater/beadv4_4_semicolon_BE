@@ -47,6 +47,7 @@ public class ProductMapper {
                         .name(p.getCategory().getCategoryName())
                         .depth(p.getCategory().getDepth())
                         .build())
+                .createdAt(p.getCreatedAt())
                 .build();
     }
 }

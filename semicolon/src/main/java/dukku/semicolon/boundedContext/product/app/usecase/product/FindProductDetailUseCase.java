@@ -8,11 +8,13 @@ import dukku.semicolon.shared.product.dto.product.ProductDetailResponse;
 import dukku.semicolon.shared.product.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class FindProductDetailUseCase {
     private final ProductRepository productRepository;
     private final ProductStatsRedisSupport  productStatsRedisSupport;

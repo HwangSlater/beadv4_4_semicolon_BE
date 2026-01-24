@@ -1,12 +1,13 @@
-package dukku.semicolon.boundedContext.product.app;
+package dukku.semicolon.boundedContext.product.app.usecase.shop;
 
 import dukku.common.shared.product.type.SaleStatus;
+import dukku.semicolon.boundedContext.product.app.support.ProductMapper;
 import dukku.semicolon.boundedContext.product.entity.Product;
 import dukku.semicolon.boundedContext.product.entity.ProductSeller;
 import dukku.semicolon.boundedContext.product.out.ProductRepository;
 import dukku.semicolon.boundedContext.product.out.ProductSellerRepository;
-import dukku.semicolon.shared.product.dto.ProductListItemResponse;
 import dukku.semicolon.shared.product.dto.ShopProductListResponse;
+import dukku.semicolon.shared.product.dto.product.ProductListItemResponse;
 import dukku.semicolon.shared.product.exception.ProductSellerNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;

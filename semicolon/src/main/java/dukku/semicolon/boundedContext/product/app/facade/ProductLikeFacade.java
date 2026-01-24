@@ -1,10 +1,9 @@
 package dukku.semicolon.boundedContext.product.app.facade;
 
 import dukku.common.global.UserUtil;
-import dukku.semicolon.boundedContext.product.app.usecase.product.FindMyLikedProductsUseCase;
-import dukku.semicolon.boundedContext.product.app.usecase.product.LikeProductUseCase;
-import dukku.semicolon.boundedContext.product.app.usecase.product.UnlikeProductUseCase;
-import dukku.semicolon.shared.product.dto.product.LikeProductResponse;
+import dukku.semicolon.boundedContext.product.app.usecase.like.FindMyLikedProductsUseCase;
+import dukku.semicolon.boundedContext.product.app.usecase.like.LikeProductUseCase;
+import dukku.semicolon.boundedContext.product.app.usecase.like.UnlikeProductUseCase;
 import dukku.semicolon.shared.product.dto.product.MyLikedProductListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -27,7 +26,7 @@ public class ProductLikeFacade {
         unlikeProductUseCase.execute(UserUtil.getUserId(), productUuid);
     }
 
-    public MyLikedProductListResponse myLikes(UUID userUuid, int page, int size) {
-        return findMyLikedProductsUseCase.execute(userUuid, page, size);
+    public MyLikedProductListResponse myLikes(int page, int size) {
+        return findMyLikedProductsUseCase.execute(UserUtil.getUserId(), page, size);
     }
 }

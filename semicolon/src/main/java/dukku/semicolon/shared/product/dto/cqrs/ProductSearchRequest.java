@@ -5,14 +5,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class ProductSearchRequest {
-    private String keyword;
-    private Long categoryId;
-    private Long minPrice;
-    private Long maxPrice;
-    private ConditionStatus conditionStatus; // 상품 상태 필터
+    private final String keyword;
+    private final Integer categoryId;
+    private final Long minPrice;
+    private final Long maxPrice;
+    private final ConditionStatus conditionStatus;
+    private final ProductSortType sortType;
 
-    // 정렬 기준 추가 (기본값: 최신순)
-    private ProductSortType sortType = ProductSortType.LATEST;
+    public ProductSearchRequest(
+            String keyword,
+            Integer categoryId,
+            Long minPrice,
+            Long maxPrice,
+            ConditionStatus conditionStatus,
+            ProductSortType sortType
+    ) {
+        this.keyword = keyword;
+        this.categoryId = categoryId;
+        this.minPrice = minPrice;
+        this.maxPrice = maxPrice;
+        this.conditionStatus = conditionStatus;
+        this.sortType = (sortType != null) ? sortType : ProductSortType.LATEST;
+    }
 }

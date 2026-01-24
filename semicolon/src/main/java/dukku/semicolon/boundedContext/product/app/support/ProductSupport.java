@@ -41,8 +41,8 @@ public class ProductSupport {
         return product;
     }
 
-    public void validateImageCount(int currentCount, int addCount) {
-        if (currentCount + addCount > 10) {
+    public void validateImageCount(int addCount) {
+        if (addCount > 10) {
             throw new ProductImageLimitExceededException();
         }
     }

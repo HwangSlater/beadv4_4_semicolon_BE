@@ -1,5 +1,6 @@
 package dukku.semicolon.shared.product.dto.product;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import dukku.common.shared.product.type.SaleStatus;
 import dukku.semicolon.boundedContext.product.entity.Product;
 import dukku.semicolon.boundedContext.product.entity.ProductImage;
@@ -19,6 +20,7 @@ public class ProductListItemResponse {
     private Long price;
     private String thumbnailUrl;
     private SaleStatus saleStatus;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
     private int likeCount;
     private int viewCount;
