@@ -1,31 +1,31 @@
-# [Stage 1] 빌드 단계 (Builder)
-# Java 25 JDK 이미지를 사용하여 소스를 빌드합니다.
+# [Stage 1] 빌드 단계
 FROM eclipse-temurin:25-jdk AS builder
 
 WORKDIR /app
 
-# Gradle 캐시 효율화를 위해 설정 파일만 먼저 복사
+# 1. Gradle 래퍼 및 설정 파일 복사 (캐시 효율화)
 COPY gradlew .
 COPY gradle gradle
 COPY build.gradle .
 COPY settings.gradle .
 
-# 소스 코드 복사
-COPY src src
+# 2. 멀티 모듈 소스 복사 (common, semicolon 폴더를 통째로 복사)
+COPY common common
+COPY semicolon semicolon
 
-# 권한 부여 및 빌드 (테스트 생략)
-# 이 명령어가 실행되면 Docker 안에서 /app/build/libs/ 에 JAR가 생성됩니다.
+# 3. 빌드 실행
+# :semicolon:bootJar 명령어로 메인 애플리케이션 모듈만 실행 가능한 JAR로 만듭니다.
+# (common 모듈은 의존성에 의해 알아서 같이 빌드됩니다)
 RUN chmod +x ./gradlew
-RUN ./gradlew clean bootJar -x test
+RUN ./gradlew clean :semicolon:bootJar -x test
 
-# [Stage 2] 실행 단계 (Runner)
-# 실행에 필요한 가벼운 이미지만 가져옵니다.
+# [Stage 2] 실행 단계
 FROM eclipse-temurin:25-jdk
 
 WORKDIR /app
 
-# Stage 1(builder)에서 만들어진 JAR 파일만 쏙 가져옵니다.
-# 경로 오차 없이 확실하게 복사됩니다.
-COPY --from=builder /app/build/libs/*.jar app.jar
+# 4. 빌드된 JAR 파일 복사
+# 위치 주의: /app/semicolon/build/libs/ 안에 생성됩니다.
+COPY --from=builder /app/semicolon/build/libs/*.jar app.jar
 
 ENTRYPOINT ["java", "-jar", "/app.jar"]
