@@ -3,6 +3,7 @@ package dukku.semicolon.boundedContext.product.app.usecase.cart;
 import dukku.common.global.exception.BadRequestException;
 import dukku.common.global.exception.ConflictException;
 import dukku.common.global.exception.NotFoundException;
+import dukku.common.shared.product.type.AccountStatus;
 import dukku.common.shared.product.type.SaleStatus;
 import dukku.semicolon.boundedContext.product.entity.Cart;
 import dukku.semicolon.boundedContext.product.entity.Product;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -28,8 +30,13 @@ public class CreateCartUseCase {
         Product product = productRepository.findByUuid(productUuid)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 상품입니다."));
 
-        ProductUser user = productUserRepository.findById(userUuid)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 유저입니다."));
+        ProductUser user = productUserRepository
+                .findById(userUuid)
+                .orElseGet(() ->
+                        productUserRepository.save(
+                                new ProductUser(userUuid, "asd", AccountStatus.ACTIVE)
+                        )
+                );
 
         validateCart(user, product);
 
