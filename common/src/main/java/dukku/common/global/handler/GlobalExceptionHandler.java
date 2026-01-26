@@ -2,7 +2,6 @@ package dukku.common.global.handler;
 
 import dukku.common.global.exception.BaseException;
 import dukku.common.global.exception.response.ErrorResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,9 +9,6 @@ import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.util.ContentCachingRequestWrapper;
-
-import java.nio.charset.StandardCharsets;
 
 /**
  * 전역 예외 처리 클래스.
@@ -62,23 +58,13 @@ public class GlobalExceptionHandler {
     /**
      * 알 수 없는 예외 처리.
      * 내부 로깅 후, 클라이언트에는 일반화된 서버 오류 메시지(INTERNAL_SERVER_ERROR)로 응답 반환.
-     * (URL과 Request Body 정보를 로그에 포함하도록 수정됨)
      *
      * @param ex Exception 인스턴스
-     * @param request HttpServletRequest (URL, Body 추출용)
      * @return HTTP 500 상태와 에러 응답
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleUnknownException(Exception ex, HttpServletRequest request) {
-        // 1. 요청 URL 및 Method 추출
-        String url = request.getRequestURI();
-        String method = request.getMethod();
-
-        // 2. Body 추출 (CachingRequestFilter가 적용되어 있어야 함)
-        String body = getRequestBody(request);
-
-        // 3. 상세 로그 출력
-        log.error("[UnhandledException] {} {}\n[Body]: {}\n[Error]: {}", method, url, body, ex.getMessage(), ex);
+    public ResponseEntity<ErrorResponse> handleUnknownException(Exception ex) {
+        log.error("UnhandledException: {}", ex.getMessage(), ex);
 
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), "서버 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR.value());
 
@@ -86,28 +72,4 @@ public class GlobalExceptionHandler {
                 .body(errorResponse);
     }
 
-    /**
-     * HttpServletRequest에서 Body 내용을 문자열로 추출하는 헬퍼 메서드.
-     * ContentCachingRequestWrapper로 감싸져 있을 때만 읽을 수 있음.
-     */
-    private String getRequestBody(HttpServletRequest request) {
-        if (request instanceof ContentCachingRequestWrapper) {
-            ContentCachingRequestWrapper wrapper = (ContentCachingRequestWrapper) request;
-            try {
-                byte[] buf = wrapper.getContentAsByteArray();
-                if (buf.length == 0) {
-                    return "[Empty Body]";
-                }
-                // 인코딩 설정 (기본값 UTF-8)
-                String characterEncoding = wrapper.getCharacterEncoding();
-                if (characterEncoding == null) {
-                    characterEncoding = StandardCharsets.UTF_8.name();
-                }
-                return new String(buf, characterEncoding);
-            } catch (Exception e) {
-                return "[Body Read Error]";
-            }
-        }
-        return "[Body Not Cached] (Check CachingRequestFilter)";
-    }
 }
